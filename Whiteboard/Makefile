@@ -12,7 +12,7 @@ CC   = g++ -Wall
  
 .PHONY: all depend clean
 
-all: depend $(EXE)
+all: $(EXE)
 
 depend:
 	g++ -E -M $(SRCS) > Makefile.depend
@@ -23,7 +23,7 @@ clean:
 #------------------------------------------
 
 $(EXE): $(OBJS)
-	$(CC) -o $@ $(OBJS)
+	$(CC) $(OBJS) -o $@
  
 .cpp.o:
 	$(CC) $< -c -o $@
