@@ -1,42 +1,34 @@
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
-#include "RakNet/RakNetworkFactory.h"
-#include "RakNet/RakPeerInterface.h"
-#include "RakNet/MessageIdentifiers.h"
+#include "Raknet/RakNetworkFactory.h"
+#include "Raknet/RakPeerInterface.h"
+#include "Raknet/MessageIdentifiers.h"
 
 #define MAX_CLIENTS 10
 #define SERVER_PORT 60000
-
 
 // Moved out of main - needs global scope
 RakPeerInterface *peer;
 bool isServer;
 
-
 void PrintMessage(RPCParameters *rpcParameters)
 {
 	printf("%s\n", rpcParameters->input);
-	
+
 	if (isServer){
 		peer->RPC("PrintMessage",(const char*)rpcParameters->input, rpcParameters->numberOfBitsOfData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, rpcParameters->sender, true, 0, UNASSIGNED_NETWORK_ID, 0);
 	}
-	
 }
 
 int main(void)
 {
 	char str[512];
-	
 	//RakPeerInterface *peer = RakNetworkFactory::GetRakPeerInterface();
 	//bool isServer;
-	
 	Packet *packet;
 
-	
 	peer = RakNetworkFactory::GetRakPeerInterface();
-	
-	
+
 	printf("(C) or (S)erver?\n");
 	gets(str);
 	if ((str[0]=='c')||(str[0]=='C'))
@@ -64,16 +56,11 @@ int main(void)
 	}
 
 	REGISTER_STATIC_RPC(peer, PrintMessage);
-    
-    int pid = 1;
-    if (!isServer){
-        pid = fork();
-        printf("%d\n", pid);
-    }
 
 	while (1)
 	{
-        if (!pid){
+
+		if (!isServer){
 			printf("Enter a string to show on the server: ");
 			gets(str);
 			// Two tricky things here.  First, you have to remember to send the NULL terminator so you need strlen(str)+1
@@ -86,7 +73,7 @@ int main(void)
 
 		packet=peer->Receive();
 
-		while (packet)
+		while(packet)
 		{
 			switch (packet->data[0])
 			{
@@ -136,12 +123,12 @@ int main(void)
 			}
 
 			peer->DeallocatePacket(packet);
-            
+
 			// Stay in the loop as long as there are more packets.
 			packet = peer->Receive();
 		}
 	}
-	
+
 	RakNetworkFactory::DestroyRakPeerInterface(peer);
 
 	return 0;
