@@ -3,6 +3,10 @@
 class Prompt : public wxFrame
 {
 public:
-  Prompt(const wxString& title);
+	Prompt(const wxString& title, wxFrame *parent);
+	void OnOK(wxCommandEvent& WXUNUSED(event));
+	void OnCancel(wxCommandEvent& WXUNUSED(event));
 
+private:
+    DECLARE_EVENT_TABLE()
 };

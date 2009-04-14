@@ -1,23 +1,28 @@
 #include "textWindow.h"
 
+// Variables that need to be viewed elsewhere
+wxString name;
+wxString ip;
+
+wxPanel *panel = new wxPanel();
 wxTextCtrl *tc2;
 wxTextCtrl *tc3;
+wxStaticText *headerText;
 
 textWindow::textWindow(const wxString& title)
        : wxFrame(NULL, -1, title, wxPoint(-1, -1), wxSize(300, 400))
 {
 
-  wxPanel *panel = new wxPanel(this, -1);
+  panel->Create(this, -1);
 
   wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
 
 
 
   wxBoxSizer *hbox2 = new wxBoxSizer(wxHORIZONTAL);
-  wxStaticText *st2 = new wxStaticText(panel, wxID_ANY, 
-      wxT("WEEE Classes"));
+  headerText = new wxStaticText();
 
-  hbox2->Add(st2, 0);
+  hbox2->Add(headerText, 0);
   vbox->Add(hbox2, 0, wxLEFT | wxTOP, 10);
 
   vbox->Add(-1, 10);
@@ -62,9 +67,20 @@ void textWindow::OnTextEnter(wxCommandEvent& WXUNUSED(event))
 {
 	wxString input = tc3->GetValue() + "\n";
 	if (input != "\n"){
+		tc2->AppendText(name);
+		tc2->AppendText(_T(": "));
 		tc2->AppendText(input);
 		tc3->Clear();
 	}
+}
+
+void textWindow::initialize(wxString n, wxString i)
+{
+	name = n;
+	ip = i;
+	wxString text = "Name: " + name + "     Address: " + ip;
+	headerText->Create(panel, wxID_ANY, 
+      text);
 }
 
 BEGIN_EVENT_TABLE(textWindow, wxFrame)
