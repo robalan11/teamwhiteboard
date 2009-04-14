@@ -3,6 +3,5 @@
 class GotoClass : public wxFrame
 {
 public:
-  GotoClass(const wxString& title);
-
+	GotoClass(const wxString& title);
 };
