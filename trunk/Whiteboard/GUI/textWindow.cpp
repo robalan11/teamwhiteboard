@@ -30,6 +30,7 @@ wxTextCtrl *tc3;
 wxStaticText *headerText;
 StatusWindow *status;
 
+// The constructor
 textWindow::textWindow(const wxString& title)
        : wxFrame(NULL, -1, title, wxPoint(-1, -1), wxSize(300, 400))
 {
@@ -86,33 +87,31 @@ textWindow::textWindow(const wxString& title)
 	Centre();
 }
 
+// The quit function
 void textWindow::Quit()
 {
 	status->Close(true);
 	Close(true);
 }
 
-/**
- * Event handler: Quit
- * Activated when the quit button is pressed.  Closes the program.
- */
+// The QUIT event handler
 void textWindow::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
     Quit();
 }
 
-/**
- * Event handler: enter text
- * Activated when the send button is pressed.  Displayes the text on the 
- * screen, and transfers it to the server.
- */
+// The "text enter" event handler
 void textWindow::OnTextEnter(wxCommandEvent& WXUNUSED(event))
 {
 	wxString input = tc3->GetValue() + _T("\n");
+
+	// Make sure something is entered
 	if (input != "\n"){
 		input = name + _T(": ") + input;
 		tc2->AppendText(input);
 		tc3->Clear();
+
+		// Send it over the network
 		if (server){
 			m_server_out->WriteMsg(input.c_str(), (wxStrlen(input) + 1) * sizeof(wxChar));
 		}else{
@@ -121,6 +120,7 @@ void textWindow::OnTextEnter(wxCommandEvent& WXUNUSED(event))
 	}
 }
 
+// Sets up a client
 void textWindow::setupClient()
 {
 	// Create the socket
@@ -142,7 +142,8 @@ void textWindow::setupClient()
 	status->Append(_T("==Connecting to server (") + ip + _T(")==\n"));
 	m_sock_out->Connect(server_ip, false);
 	m_sock_out->WaitOnConnect(10);
-
+	
+	// Test connection
 	if (m_sock_out->IsConnected())
 		status->Append(_T("Connection established\n"));
 	else{
@@ -151,6 +152,7 @@ void textWindow::setupClient()
 	}
 }
 
+// Sets up the server
 void textWindow::setupServer()
 {
 	// Create the address - defaults to localhost:0 initially
@@ -178,10 +180,7 @@ void textWindow::setupServer()
 	m_numClients = 0;
 }
 
-/**
- * Initializes the window.  The window is enabled, and the header is given the 
- * name and IP.
- */
+// Initializes the window
 void textWindow::initialize(wxString n, wxString i)
 {
 	// Modify the window
@@ -201,6 +200,7 @@ void textWindow::initialize(wxString n, wxString i)
 	}
 }
 
+// Server event handler
 void textWindow::OnServerEvent(wxSocketEvent& event)
 {
 	// Accept new connection if there is one in the pending
@@ -224,6 +224,7 @@ void textWindow::OnServerEvent(wxSocketEvent& event)
 	m_numClients++;
 }
 
+// Socket event handler
 void textWindow::OnSocketEvent(wxSocketEvent& event)
 {
 		wxSocketBase *sock = event.GetSocket();
@@ -268,6 +269,7 @@ void textWindow::OnSocketEvent(wxSocketEvent& event)
 		}
 }
 
+// The event table
 BEGIN_EVENT_TABLE(textWindow, wxFrame)
 	EVT_BUTTON(wxID_EXIT,  textWindow::OnQuit)
 	EVT_BUTTON(wxID_SAVE, textWindow::OnTextEnter)
