@@ -11,7 +11,7 @@ class Prompt : public wxFrame
 public:
 
 	/**
-	 * The default constructor.
+	 * The constructor.
 	 */
 	Prompt(const wxString& title, wxFrame *parent);
 

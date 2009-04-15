@@ -16,7 +16,7 @@ wxString id;
 
 // Networking
 bool server;
-wxSocketBase *m_server_out;
+wxSocketBase *m_server_out[64];
 wxSocketServer *m_server_in;
 wxSocketClient *m_sock_in;
 wxSocketClient *m_sock_out;
@@ -113,7 +113,10 @@ void textWindow::OnTextEnter(wxCommandEvent& WXUNUSED(event))
 
 		// Send it over the network
 		if (server){
-			m_server_out->WriteMsg(input.c_str(), (wxStrlen(input) + 1) * sizeof(wxChar));
+			// Send it to all clients
+			for (int i = 0; i < m_numClients; i++){
+				m_server_out[i]->WriteMsg(input.c_str(), (wxStrlen(input) + 1) * sizeof(wxChar));
+			}
 		}else{
 			m_sock_out->WriteMsg(input.c_str(), (wxStrlen(input) + 1) * sizeof(wxChar));
 		}
@@ -203,12 +206,14 @@ void textWindow::initialize(wxString n, wxString i)
 // Server event handler
 void textWindow::OnServerEvent(wxSocketEvent& event)
 {
+	wxSocketBase *sock;
+
 	// Accept new connection if there is one in the pending
 	// connections queue, else exit. We use Accept(false) for
 	// non-blocking accept (although if we got here, there
 	// should ALWAYS be a pending connection).
 
-	m_server_out = m_server_in->Accept(false);
+	sock = m_server_in->Accept(false);
 
 	if (m_server_out){
 		status->Append(_T("New client connection accepted\n\n"));
@@ -217,10 +222,11 @@ void textWindow::OnServerEvent(wxSocketEvent& event)
 		return;
 	}
 
-	m_server_out->SetEventHandler(*this, SOCKET_ID);
-	m_server_out->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
-	m_server_out->Notify(true);
+	sock->SetEventHandler(*this, SOCKET_ID);
+	sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
+	sock->Notify(true);
 
+	m_server_out[m_numClients] = sock;
 	m_numClients++;
 }
 
@@ -243,6 +249,12 @@ void textWindow::OnSocketEvent(wxSocketEvent& event)
 
 				// Display it on the window
 				tc2->AppendText(text);
+
+				// Send the messages to the other clients
+				for (int i = 0; i < m_numClients; i++){
+					if (m_server_out[i] != sock)
+						m_server_out[i]->WriteMsg(text, (wxStrlen(text) + 1) * sizeof(wxChar));
+				}
 
 				// Enable input events again.
 				sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
