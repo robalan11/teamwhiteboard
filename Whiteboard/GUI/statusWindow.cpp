@@ -12,6 +12,7 @@ StatusWindow::StatusWindow(const wxString& title)
 
 }
 
+// The append function
 void StatusWindow::Append(const wxString& text)
 {
 	textBox->AppendText(text);

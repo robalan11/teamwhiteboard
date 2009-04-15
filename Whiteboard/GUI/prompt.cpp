@@ -1,6 +1,7 @@
 #include "prompt.h"
 #include "textWindow.h"
 
+// Defines
 #define wxID_ANSWER1 3000
 #define wxID_ANSWER2 3001
 #define wxID_ANSWER3 3002
@@ -11,6 +12,7 @@ wxTextCtrl *name_answer;
 wxComboBox *sc_answer;
 wxTextCtrl *ip_answer;
 
+// The constructor
 Prompt::Prompt(const wxString& title, wxFrame *parent)
        : wxFrame(NULL, -1, title, wxPoint(-1, -1), wxSize(290, 200), wxMINIMIZE_BOX | wxCAPTION | wxSYSTEM_MENU)
 {
@@ -59,9 +61,11 @@ Prompt::Prompt(const wxString& title, wxFrame *parent)
 	Centre();
 }
 
+// The OK event handler
 void Prompt::OnOK(wxCommandEvent& WXUNUSED(event))
 {
 	wxString thisName, thisIP;
+
 	// Check for name
 	if (name_answer->GetValue() == _T("")){
 		wxMessageDialog *dial = new wxMessageDialog(NULL, 
@@ -85,18 +89,21 @@ void Prompt::OnOK(wxCommandEvent& WXUNUSED(event))
 	}else{
 		thisIP = _T("none");
 	}
-
+	
+	// Initialize the chat window
 	((textWindow *)parentWindow)->initialize(thisName, thisIP);
 	parentWindow->Enable();
 	Close(true);
 }
 
+// The cancel event handler
 void Prompt::OnCancel(wxCommandEvent& WXUNUSED(event))
 {
 	((textWindow *)parentWindow)->Quit();
 	Close(true);
 }
 
+// The combo box event handler
 void Prompt::ChangeIPField(wxCommandEvent& WXUNUSED(event))
 {
 	if (sc_answer->GetValue() == _T("Server")){
@@ -106,6 +113,7 @@ void Prompt::ChangeIPField(wxCommandEvent& WXUNUSED(event))
 	}
 }
 
+// The event table
 BEGIN_EVENT_TABLE(Prompt, wxFrame)
   EVT_BUTTON(wxID_OK,  Prompt::OnOK)
   EVT_BUTTON(wxID_CANCEL, Prompt::OnCancel)

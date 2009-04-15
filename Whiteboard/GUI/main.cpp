@@ -1,5 +1,4 @@
 #include "main.h"
-#include "simple.h"
 #include "textWindow.h"
 #include "prompt.h"
 
