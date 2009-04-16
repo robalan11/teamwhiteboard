@@ -34,10 +34,10 @@ WhiteboardWindow::WhiteboardWindow(const wxString& title, textWindow *parent)
 	butt_rect->Create(this, 2, "Rect", wxPoint(0,64), wxSize(32,32));
 	wxButton *butt_circ = new wxButton();
 	butt_circ->Create(this, 3, "Circle", wxPoint(0,96), wxSize(32,32));
-	wxButton *butt_free = new wxButton();
-	butt_free->Create(this, 4, "Free\nDraw", wxPoint(0,128), wxSize(32,32));
+	//wxButton *butt_free = new wxButton();
+	//butt_free->Create(this, 4, "Free\nDraw", wxPoint(0,128), wxSize(32,32));
 	wxButton *butt_undo = new wxButton();
-	butt_undo->Create(this, 5, "Undo", wxPoint(0,160), wxSize(32,32));
+	butt_undo->Create(this, 5, "Undo", wxPoint(0,128), wxSize(32,32));
 
 }
 
@@ -73,11 +73,11 @@ void WhiteboardWindow::Circ(wxCommandEvent &WXUNUSED(event))
 	m_activeTool = "circ";
 }
 
-void WhiteboardWindow::Free(wxCommandEvent &WXUNUSED(event))
+/*void WhiteboardWindow::Free(wxCommandEvent &WXUNUSED(event))
 {
 	SetStatusText(_T("Click and drag to draw freely."));
 	m_activeTool = "free";
-}
+}*/
 
 void WhiteboardWindow::Undo(wxCommandEvent &WXUNUSED(event))
 {
@@ -98,7 +98,7 @@ BEGIN_EVENT_TABLE(WhiteboardWindow, wxFrame)
 	EVT_BUTTON (1, WhiteboardWindow::Line)
 	EVT_BUTTON (2, WhiteboardWindow::Rect)
 	EVT_BUTTON (3, WhiteboardWindow::Circ)
-	EVT_BUTTON (4, WhiteboardWindow::Free)
+	//EVT_BUTTON (4, WhiteboardWindow::Free)
 	EVT_BUTTON (5, WhiteboardWindow::Undo)
 END_EVENT_TABLE()
 
