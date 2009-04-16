@@ -64,6 +64,11 @@ class textWindow : public wxFrame
 		 */
 		bool IsServer();
 
+		/**
+		 * Sends a new shape to all connected clients
+		 */
+		void sendNewShape(std::vector<wxString>);
+
 	private:
 
 		/**

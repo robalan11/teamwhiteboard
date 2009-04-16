@@ -43,7 +43,7 @@ void AdminWindow::updateList(std::vector<wxString> list)
 }
 
 // The append function
-void AdminWindow::OnKickEvent(wxSocketEvent& event)
+void AdminWindow::OnKickEvent(wxSocketEvent &WXUNUSED(event))
 {
 	;
 }

@@ -126,6 +126,7 @@ void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
 	if (m_owner->m_activeTool == "clear")
 	{
 		objects.clear();
+		foob.push_back(_T("clear"));
 	}
 
 	if (m_owner->m_activeTool == "line")
@@ -174,8 +175,10 @@ void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
 	}
 
 	if (m_owner->m_activeTool != "clear" && m_owner->m_activeTool != "") objects.push_back(foob);
+	
+	m_owner->m_parent->sendNewShape(foob);
 
-	for (int i = 0; i < objects.size(); i++)
+	for (unsigned int i = 0; i < objects.size(); i++)
 	{
 		dc.SetPen( wxPen( wxT("black"), 1, wxSOLID) );
 		dc.SetBrush( *wxGREY_BRUSH );
@@ -190,6 +193,15 @@ void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
 		}
 
 	}
+}
+
+void MyCanvas::addNewShape(std::vector<wxString> shape)
+{
+	//wxString temp = m_owner->m_activeTool;
+	//m_owner->m_activeTool = shape[0];
+	objects.push_back(shape);
+	Refresh();
+	//m_owner->m_activeTool = temp;
 }
 
 void MyCanvas::OnMouseMove(wxMouseEvent &event)
