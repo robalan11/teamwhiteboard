@@ -5,8 +5,11 @@
 // Defines
 #define SERVER_ID 100
 #define SOCKET_ID 101
+#define TEXT_INPUT_BOX 200
 #define CLIENT_OPEN 102
 #define CLIENT_CLOSE 103
+
+#define MAX_CLIENTS 64
 
 // Variables that need to be viewed elsewhere
 
@@ -17,7 +20,7 @@ wxString id;
 
 // Networking
 bool server;
-wxSocketBase *m_server_out[64];
+wxSocketBase *m_server_out[MAX_CLIENTS];
 wxSocketServer *m_server_in;
 wxSocketClient *m_sock_in;
 wxSocketClient *m_sock_out;
@@ -64,8 +67,8 @@ textWindow::textWindow(const wxString& title)
 
 	// Third section, input box
 	wxBoxSizer *hbox3 = new wxBoxSizer(wxHORIZONTAL);
-	tc3 = new wxTextCtrl(panel, 1, wxT(""), 
-      wxPoint(-1, -1), wxSize(-1, -1), wxTE_LEFT);
+	tc3 = new wxTextCtrl(panel, TEXT_INPUT_BOX, wxT(""), 
+      wxPoint(-1, -1), wxSize(-1, -1), wxTE_LEFT | wxTE_PROCESS_ENTER);
 
 	hbox3->Add(tc3, 1, wxEXPAND);
 	vbox->Add(hbox3, 0, wxLEFT | wxRIGHT | wxEXPAND, 10);
@@ -154,9 +157,11 @@ void textWindow::setupClient()
 	m_sock_out->WaitOnConnect(10);
 	
 	// Test connection
-	if (m_sock_out->IsConnected())
+	if (m_sock_out->IsConnected()){
 		status->Append(_T("Connection established\n"));
-	else{
+		// Send name
+		m_sock_out->WriteMsg(name.c_str(), (wxStrlen(name) + 1) * sizeof(wxChar));
+	}else{
 		m_sock_out->Close();
 		status->Append(_T("Failed ! Unable to connect\n"));
 	}
@@ -166,8 +171,18 @@ void textWindow::setupClient()
 void textWindow::setupServer()
 {
 	// Create the address - defaults to localhost:0 initially
+	wxIPV4address remote;
+	remote.Hostname(_T("www.wxwidgets.org"));
+	remote.Service(80);
+ 
+	wxIPV4address local;
+ 
+	wxSocketClient client;
+	if(client.Connect(remote)) client.GetLocal(local);
+
 	wxIPV4address addr;
 	addr.Service(3000);
+	addr.Hostname(local.IPAddress());
 	status->Append(_T("Server created.  IP: ") + addr.IPAddress() + _T("\n"));
 
 	// Create the socket
@@ -229,9 +244,16 @@ void textWindow::OnServerEvent(wxSocketEvent& event)
 		return;
 	}
 
+	// Get the name of the person who connected
+	wxChar *text = new wxChar[100];
+	sock->ReadMsg(text, sizeof(wxChar)*100).LastCount();
+
 	sock->SetEventHandler(*this, SOCKET_ID);
 	sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
 	sock->Notify(true);
+
+	status->Append(text);
+	status->Append(_T(" has joined\n"));
 
 	m_server_out[m_numClients] = sock;
 	m_numClients++;
@@ -292,7 +314,7 @@ void textWindow::OnSocketEvent(wxSocketEvent& event)
 BEGIN_EVENT_TABLE(textWindow, wxFrame)
 	EVT_BUTTON(wxID_EXIT,  textWindow::OnQuit)
 	EVT_BUTTON(wxID_SAVE, textWindow::OnTextEnter)
-	EVT_TEXT_ENTER(1, textWindow::OnTextEnter)
+	EVT_TEXT_ENTER(TEXT_INPUT_BOX, textWindow::OnTextEnter)
 	EVT_SOCKET(SERVER_ID,  textWindow::OnServerEvent)
 	EVT_SOCKET(SOCKET_ID,  textWindow::OnSocketEvent)
 END_EVENT_TABLE()
