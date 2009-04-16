@@ -36,6 +36,8 @@ WhiteboardWindow::WhiteboardWindow(const wxString& title, textWindow *parent)
 	butt_circ->Create(this, 3, "Circle", wxPoint(0,96), wxSize(32,32));
 	wxButton *butt_free = new wxButton();
 	butt_free->Create(this, 4, "Free\nDraw", wxPoint(0,128), wxSize(32,32));
+	wxButton *butt_undo = new wxButton();
+	butt_undo->Create(this, 5, "Undo", wxPoint(0,160), wxSize(32,32));
 
 }
 
@@ -77,6 +79,14 @@ void WhiteboardWindow::Free(wxCommandEvent &WXUNUSED(event))
 	m_activeTool = "free";
 }
 
+void WhiteboardWindow::Undo(wxCommandEvent &WXUNUSED(event))
+{
+	SetStatusText(_T("Last command undone."));
+	m_activeTool = "";
+	m_canvas->objects.pop_back();
+	m_canvas->Refresh();
+}
+
 BEGIN_EVENT_TABLE(WhiteboardWindow, wxFrame)
 	//Buttons
 	EVT_BUTTON (0, WhiteboardWindow::Clear)
@@ -84,6 +94,7 @@ BEGIN_EVENT_TABLE(WhiteboardWindow, wxFrame)
 	EVT_BUTTON (2, WhiteboardWindow::Rect)
 	EVT_BUTTON (3, WhiteboardWindow::Circ)
 	EVT_BUTTON (4, WhiteboardWindow::Free)
+	EVT_BUTTON (5, WhiteboardWindow::Undo)
 END_EVENT_TABLE()
 
 
@@ -111,8 +122,6 @@ void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
 	
 	std::vector<wxString> foob; //foob!@
 	char buffer[128];
-
-	if (m_owner->m_activeTool == "") return;
 
 	if (m_owner->m_activeTool == "clear")
 	{
@@ -164,7 +173,7 @@ void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
 		dc.DrawLine( m_startPos.x, m_startPos.y, x, y );
 	}
 
-	if (m_owner->m_activeTool != "clear") objects.push_back(foob);
+	if (m_owner->m_activeTool != "clear" && m_owner->m_activeTool != "") objects.push_back(foob);
 
 	for (int i = 0; i < objects.size(); i++)
 	{

@@ -76,6 +76,7 @@ class WhiteboardWindow : public wxFrame
 		void Rect(wxCommandEvent &WXUNUSED(event));
 		void Circ(wxCommandEvent &WXUNUSED(event));
 		void Free(wxCommandEvent &WXUNUSED(event));
+		void Undo(wxCommandEvent &WXUNUSED(event));
 		
 		int         m_backgroundMode;
 		int         m_textureBackground;
