@@ -110,17 +110,42 @@ void textWindow::OnQuit(wxCommandEvent& WXUNUSED(event))
     Quit();
 }
 
+void ParseCommand(wxString command) {
+	wxRegEx comparator;
+	comparator.Compile("^/me .+", 0);
+	if (comparator.Matches(command)) {
+		command = name + _T(" ") + command.substr(4, command.length()-4);
+		tc2->AppendText(command);
+		if (server){
+			// Send it to all clients
+			for (int i = 0; i < m_numClients; i++){
+				m_server_out[i]->WriteMsg(command.c_str(), (wxStrlen(command) + 1) * sizeof(wxChar));
+			}
+		}else{
+			m_sock_out->WriteMsg(command.c_str(), (wxStrlen(command) + 1) * sizeof(wxChar));
+		}
+	}
+}
+
 // The "text enter" event handler
 void textWindow::OnTextEnter(wxCommandEvent& WXUNUSED(event))
 {
 	wxString input = tc3->GetValue() + _T("\n");
+	
+	wxRegEx comparator;
+	comparator.Compile("^/.+", wxRE_EXTENDED);
+	if (comparator.Matches(input)) {
+		ParseCommand(input);
+		tc3->Clear();
+		return;
+	}
 
 	// Make sure something is entered
 	if (input != "\n"){
 		input = name + _T(": ") + input;
 		tc2->AppendText(input);
 		tc3->Clear();
-
+		
 		// Send it over the network
 		if (server){
 			// Send it to all clients
