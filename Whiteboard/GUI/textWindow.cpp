@@ -112,8 +112,15 @@ void textWindow::OnQuit(wxCommandEvent& WXUNUSED(event))
 }
 
 void ParseCommand(wxString line) {
+	if (line.Index(' ') + 1 >= line.length() || !line.Index(' ')) {
+		tc2->SetDefaultStyle(wxTextAttr(*wxRED));
+		tc2->AppendText("Supply some arguments next time.\n");
+		tc2->SetDefaultStyle(wxTextAttr(*wxBLACK));
+		return;
+	}
 	wxString command = line.SubString(0, line.Index(' ')-1);
 	wxString remainder = line.SubString(line.Index(' ') + 1, line.length()-1);
+	
 	wxRegEx comparator;
 	comparator.Compile("^/me$", 0);
 	if (comparator.Matches(command)) {
@@ -131,7 +138,13 @@ void ParseCommand(wxString line) {
 	}
 
 	comparator.Compile("^/kick$", 0);
-	if (comparator.Matches(command)) {
+	if (server && comparator.Matches(command)) {
+		for (int i = 0; i < m_numClients; i++) {
+			if (names[i].Cmp(remainder)) {
+				m_server_out[i]->WriteMsg("/disconnect", 12 * sizeof(wxChar));
+				break;
+			}
+		}
 		return;
 	}
 
@@ -349,6 +362,10 @@ void textWindow::OnSocketEvent(wxSocketEvent& event)
 
 				// Get the text from the socket
 				sock->ReadMsg(text, sizeof(wxChar)*10000).LastCount();
+				
+				if (text[0] == '/') {
+					Quit();
+				}
 
 				// Display it on the window
 				tc2->AppendText(text);
