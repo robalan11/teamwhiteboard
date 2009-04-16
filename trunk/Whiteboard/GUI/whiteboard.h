@@ -49,6 +49,7 @@ private:
     wxBitmap     m_smile_bmp;
     wxIcon       m_std_icon;
     bool         m_clip;
+	bool         drawing;
 
     DECLARE_EVENT_TABLE()
 };
