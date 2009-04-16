@@ -7,6 +7,9 @@
 #include <wx/button.h>
 #include <math.h>
 #include <algorithm>
+#include "textWindow.h"
+#include <vector>
+#include <stdlib.h>
 
 class WhiteboardWindow;
 
@@ -34,7 +37,8 @@ public:
     void OnMouseMove(wxMouseEvent &event);
 	long         x;
 	long         y;
-	wxPoint     m_startPos;
+	wxPoint      m_startPos;
+	std::vector<std::vector<wxString> > objects;
 
 private:
     WhiteboardWindow *m_owner;
@@ -57,7 +61,7 @@ class WhiteboardWindow : public wxFrame
 		/**
 		 * The constructor
 		 */
-		WhiteboardWindow(const wxString& title);
+		WhiteboardWindow(const wxString& title, textWindow *parent);
 
 		/**
 		 * Prepares the dc
@@ -88,6 +92,7 @@ class WhiteboardWindow : public wxFrame
 	    MyCanvas   *m_canvas;
 
 		wxString    m_activeTool;
+		textWindow *m_parent;
 
 	private:
 
