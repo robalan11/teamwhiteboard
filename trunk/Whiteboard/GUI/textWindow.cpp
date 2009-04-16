@@ -161,6 +161,26 @@ void ParseCommand(wxString line) {
 				m_server_out[i]->WriteMsg("/disconnect", 12 * sizeof(wxChar));
 				banlist[num_banned] = IPs[i];
 				num_banned++;
+				tc2->SetDefaultStyle(wxTextAttr(*wxRED));
+				tc2->AppendText(_T("User ")+names[i]);
+				tc2->AppendText(_T(" from IP ")+IPs[i]);
+				tc2->AppendText(_T(" has been banned.\n"));
+				tc2->SetDefaultStyle(wxTextAttr(*wxBLACK));
+				break;
+			}
+		}
+		return;
+	}
+
+	comparator.Compile("^/unban$", 0);
+	if (server && comparator.Matches(command)) {
+		for (int i = 0; i < num_banned; i++) {
+			if (banlist[i].Cmp(remainder)) {
+				tc2->SetDefaultStyle(wxTextAttr(*wxRED));
+				tc2->AppendText(_T("IP ")+banlist[i]);
+				tc2->AppendText(_T(" has been unbanned.\n"));
+				tc2->SetDefaultStyle(wxTextAttr(*wxBLACK));
+				banlist[i] = "";
 				break;
 			}
 		}
