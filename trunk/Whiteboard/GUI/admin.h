@@ -17,6 +17,16 @@ class AdminWindow : public wxFrame
 		AdminWindow(const wxString& title);
 
 		/**
+		 * Adds a person to the list of people.
+		 */
+		void AddPerson(wxString name);
+		
+		/**
+		 * Removes a sheep.
+		 */
+		void RemovePerson(wxString name);
+
+		/**
 		 * Event handler for kick
 		 */
 		void OnKickEvent(wxSocketEvent& event);
