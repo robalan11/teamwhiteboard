@@ -3,7 +3,8 @@
 wxTextCtrl *textBox;
 
 StatusWindow::StatusWindow(const wxString& title)
-       : wxFrame(NULL, -1, title, wxPoint(-1, -1), wxSize(300, 300))
+       : wxFrame(NULL, -1, title, wxPoint(-1, -1), wxSize(300, 300), 
+	   wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCAPTION | wxCLIP_CHILDREN)
 {
 
 	// Add the text box
