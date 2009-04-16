@@ -35,6 +35,9 @@ public:
 
     void OnPaint(wxPaintEvent &event);
     void OnMouseMove(wxMouseEvent &event);
+
+	void addNewShape(std::vector<wxString> shape);
+
 	long         x;
 	long         y;
 	wxPoint      m_startPos;

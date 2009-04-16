@@ -278,7 +278,6 @@ void textWindow::setupClient()
 	wxIPV4address addr;
 	addr.Service(3000);
 	addr.Hostname(local.IPAddress());
-	status->Append(_T("Server created.  IP: ") + addr.IPAddress() + _T("\n"));
 
 	// Create the socket
 	m_sock_out = new wxSocketClient();
@@ -383,8 +382,22 @@ void textWindow::initialize(wxString n, wxString i)
 	}
 }
 
+void textWindow::sendNewShape(std::vector<wxString> shape)
+{
+	// Send it for everyone else
+	wxString intro(_T("/NewShape"));
+	wxString done(_T("/done"));
+	for (int i = 0; i < m_numClients; i++){
+		m_server_out[i]->WriteMsg(intro.c_str(), (wxStrlen(intro) + 1) * sizeof(wxChar));
+		for (unsigned int j = 0; j < shape.size(); j++){
+			m_server_out[i]->WriteMsg(shape[j].c_str(), (wxStrlen(shape[j]) + 1) * sizeof(wxChar));
+		}
+		m_server_out[i]->WriteMsg(done.c_str(), (wxStrlen(done) + 1) * sizeof(wxChar));
+	}
+}
+
 // Server event handler
-void textWindow::OnServerEvent(wxSocketEvent& event)
+void textWindow::OnServerEvent(wxSocketEvent &WXUNUSED(event))
 {
 	wxSocketBase *sock;
 
@@ -433,7 +446,7 @@ void textWindow::OnServerEvent(wxSocketEvent& event)
 	wxString intro(_T("/beginList"));
 	for (int i = 0; i < m_numClients; i++){
 		m_server_out[i]->WriteMsg(intro.c_str(), (wxStrlen(intro) + 1) * sizeof(wxChar));
-		for (int j = 0; j < list.size(); j++){
+		for (unsigned int j = 0; j < list.size(); j++){
 			m_server_out[i]->WriteMsg(list[j].c_str(), (wxStrlen(list[j]) + 1) * sizeof(wxChar));
 		}
 		m_server_out[i]->WriteMsg(done.c_str(), (wxStrlen(done) + 1) * sizeof(wxChar));
@@ -484,6 +497,24 @@ void textWindow::OnSocketEvent(wxSocketEvent& event)
 							break;
 					}
 					admin->updateList(list);
+				}else if (test == "/NewShape"){
+					// Get the new shape
+					std::vector<wxString> shape;
+					while (1){
+						wxChar *text2 = new wxChar[100];
+						sock->ReadMsg(text2, sizeof(wxChar) * 100).LastCount();
+						wxString test2(text2);
+						if (test2 != _T("/done"))
+							shape.push_back(test2);
+						else
+							break;
+					}
+					if (shape[0] == _T("clear")){
+						whiteboard->m_canvas->objects.clear();
+						whiteboard->m_canvas->Refresh();
+					}else{
+						whiteboard->m_canvas->addNewShape(shape);
+					}
 				}else{
 
 					if (text[0] == '/') {
@@ -535,7 +566,7 @@ void textWindow::OnSocketEvent(wxSocketEvent& event)
 					std::vector<wxString> list = admin->getList();
 					for (int i = 0; i < m_numClients; i++){
 						m_server_out[i]->WriteMsg(intro.c_str(), (wxStrlen(intro) + 1) * sizeof(wxChar));
-						for (int j = 0; j < list.size(); j++){
+						for (unsigned int j = 0; j < list.size(); j++){
 							m_server_out[i]->WriteMsg(list[j].c_str(), (wxStrlen(list[j]) + 1) * sizeof(wxChar));
 						}
 						m_server_out[i]->WriteMsg(done.c_str(), (wxStrlen(done) + 1) * sizeof(wxChar));
