@@ -300,6 +300,18 @@ void textWindow::setupClient()
 		// Send name
 		m_sock_out->WriteMsg(name.c_str(), (wxStrlen(name) + 1) * sizeof(wxChar));
 		status->Append(_T("Connection established\n"));
+		// Get list of connected people
+		std::vector<wxString> list;
+		while (1){
+			wxChar *text = new wxChar[100];
+			m_sock_out->ReadMsg(text, sizeof(wxChar) * 100).LastCount();
+			wxString test(text);
+			if (test != _T("/done"))
+				list.push_back(test);
+			else
+				break;
+		}
+		admin->updateList(list);
 	}else{
 		m_sock_out->Close();
 		status->Append(_T("Failed ! Unable to connect\n"));
@@ -402,6 +414,25 @@ void textWindow::OnServerEvent(wxSocketEvent& event)
 	// Add the person to the list
 	admin->AddPerson(text);
 
+	// Send the list of people already connected
+	std::vector<wxString> list = admin->getList();
+	for (unsigned int i = 0; i < list.size(); i++){
+		sock->WriteMsg(list[i].c_str(), (wxStrlen(list[i]) + 1) * sizeof(wxChar));
+	}
+	wxString done(_T("/done"));
+	sock->WriteMsg(done.c_str(), (wxStrlen(done) + 1) * sizeof(wxChar));
+
+	// Send it for everyone else
+	wxString intro(_T("/beginList"));
+	for (int i = 0; i < m_numClients; i++){
+		m_server_out[i]->WriteMsg(intro.c_str(), (wxStrlen(intro) + 1) * sizeof(wxChar));
+		for (int j = 0; j < list.size(); j++){
+			m_server_out[i]->WriteMsg(list[j].c_str(), (wxStrlen(list[j]) + 1) * sizeof(wxChar));
+		}
+		m_server_out[i]->WriteMsg(done.c_str(), (wxStrlen(done) + 1) * sizeof(wxChar));
+	}
+	
+
 	sock->SetEventHandler(*this, SOCKET_ID);
 	sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
 	sock->Notify(true);
@@ -431,20 +462,36 @@ void textWindow::OnSocketEvent(wxSocketEvent& event)
 
 				// Get the text from the socket
 				sock->ReadMsg(text, sizeof(wxChar)*10000).LastCount();
-				
-				if (text[0] == '/') {
-					Quit();
+
+				wxString test(text);
+				if (test == "/beginList"){
+					// Get list of connected people
+					std::vector<wxString> list;
+					while (1){
+						wxChar *text2 = new wxChar[100];
+						sock->ReadMsg(text2, sizeof(wxChar) * 100).LastCount();
+						wxString test2(text2);
+						if (test2 != _T("/done"))
+							list.push_back(test2);
+						else
+							break;
+					}
+					admin->updateList(list);
+				}else{
+
+					if (text[0] == '/') {
+						Quit();
+					}
+
+					// Display it on the window
+					tc2->AppendText(text);
+
+					// Send the messages to the other clients
+					for (int i = 0; i < m_numClients; i++){
+						if (m_server_out[i] != sock)
+							m_server_out[i]->WriteMsg(text, (wxStrlen(text) + 1) * sizeof(wxChar));
+					}
 				}
-
-				// Display it on the window
-				tc2->AppendText(text);
-
-				// Send the messages to the other clients
-				for (int i = 0; i < m_numClients; i++){
-					if (m_server_out[i] != sock)
-						m_server_out[i]->WriteMsg(text, (wxStrlen(text) + 1) * sizeof(wxChar));
-				}
-
 				// Enable input events again.
 				sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
 				break;
@@ -474,7 +521,18 @@ void textWindow::OnSocketEvent(wxSocketEvent& event)
 						}
 					}
 					m_numClients--;
-					
+
+					// Send it for everyone else
+					wxString intro(_T("/beginList"));
+					wxString done(_T("/done"));
+					std::vector<wxString> list = admin->getList();
+					for (int i = 0; i < m_numClients; i++){
+						m_server_out[i]->WriteMsg(intro.c_str(), (wxStrlen(intro) + 1) * sizeof(wxChar));
+						for (int j = 0; j < list.size(); j++){
+							m_server_out[i]->WriteMsg(list[j].c_str(), (wxStrlen(list[j]) + 1) * sizeof(wxChar));
+						}
+						m_server_out[i]->WriteMsg(done.c_str(), (wxStrlen(done) + 1) * sizeof(wxChar));
+					}
 				}
 
 				// Destroy() should be used instead of delete wherever possible,
