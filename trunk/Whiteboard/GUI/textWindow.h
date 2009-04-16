@@ -3,6 +3,7 @@
 #include <wx/menu.h>
 #include <wx/regex.h>
 #include <time.h>
+#include <stdlib.h>
 #include <string>
 
 /**

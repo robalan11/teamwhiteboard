@@ -132,7 +132,26 @@ void ParseCommand(wxString line) {
 
 	comparator.Compile("^/kick$", 0);
 	if (comparator.Matches(command)) {
+		return;
+	}
 
+	comparator.Compile("^/roll$", 0);
+	if (comparator.Matches(command)) {
+		int num = rand()%atoi(remainder) + 1;
+		char* str = (char*)malloc(100*sizeof(char));
+		sprintf(str, " rolls a d%d and gets a %d.\n", atoi(remainder), num);
+		wxString output = name + _T(str);
+		free(str);
+		tc2->AppendText(output);
+		if (server){
+			// Send it to all clients
+			for (int i = 0; i < m_numClients; i++){
+				m_server_out[i]->WriteMsg(output.c_str(), (wxStrlen(output) + 1) * sizeof(wxChar));
+			}
+		}else{
+			m_sock_out->WriteMsg(output.c_str(), (wxStrlen(output) + 1) * sizeof(wxChar));
+		}
+		return;
 	}
 	
 	tc2->SetDefaultStyle(wxTextAttr(*wxRED));
