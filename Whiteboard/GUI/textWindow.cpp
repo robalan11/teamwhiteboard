@@ -1,5 +1,6 @@
 #include "textWindow.h"
 #include "statusWindow.h"
+#include "admin.h"
 
 // Defines
 #define SERVER_ID 100
@@ -29,6 +30,7 @@ wxTextCtrl *tc2;
 wxTextCtrl *tc3;
 wxStaticText *headerText;
 StatusWindow *status;
+AdminWindow *admin;
 
 // The constructor
 textWindow::textWindow(const wxString& title)
@@ -81,6 +83,10 @@ textWindow::textWindow(const wxString& title)
 	// Create the status window
 	status = new StatusWindow("Status");
 	status->Show(true);
+
+	//Create the admin window
+	admin = new AdminWindow("People");
+	admin->Show(true);
 	
 	// Wrap it up
 	panel->SetSizer(vbox);
@@ -91,6 +97,7 @@ textWindow::textWindow(const wxString& title)
 void textWindow::Quit()
 {
 	status->Close(true);
+	admin->Close(true);
 	Close(true);
 }
 
