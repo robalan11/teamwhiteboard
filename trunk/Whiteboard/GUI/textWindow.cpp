@@ -101,7 +101,7 @@ textWindow::textWindow(const wxString& title)
 	admin->Show(true);
 
 	//Create the whiteboard window
-	whiteboard = new WhiteboardWindow("Whiteboard");
+	whiteboard = new WhiteboardWindow("Whiteboard", this);
 	whiteboard->Show(true);
 	
 	// Wrap it up
@@ -557,6 +557,11 @@ void textWindow::OnSocketEvent(wxSocketEvent& event)
 			}
 			default: ;
 		}
+}
+
+bool textWindow::IsServer()
+{
+	return server;
 }
 
 // The event table

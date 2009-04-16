@@ -1,3 +1,6 @@
+#ifndef __TEXT_WINDOW
+#define __TEXT_WINDOW
+
 #include <wx/wx.h>
 #include <wx/socket.h>
 #include <wx/menu.h>
@@ -56,6 +59,11 @@ class textWindow : public wxFrame
 		 */
 		void OnServerEvent(wxSocketEvent& event);
 
+		/**
+		 * Returns whether or not I am a server
+		 */
+		bool IsServer();
+
 	private:
 
 		/**
@@ -75,3 +83,5 @@ class textWindow : public wxFrame
 		 */
 		DECLARE_EVENT_TABLE()
 };
+
+#endif

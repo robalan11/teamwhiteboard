@@ -1,8 +1,10 @@
 #include "whiteboard.h"
 
-WhiteboardWindow::WhiteboardWindow(const wxString& title)
+WhiteboardWindow::WhiteboardWindow(const wxString& title, textWindow *parent)
        : wxFrame(NULL, -1, title, wxPoint(-1, -1), wxSize(640, 480), wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLIP_CHILDREN)
 {	
+	m_parent = parent;
+
     CreateStatusBar(2);
     SetStatusText(_T("Welcome to the Whiteboard!"));
 
@@ -17,6 +19,8 @@ WhiteboardWindow::WhiteboardWindow(const wxString& title)
     m_colourForeground = *wxBLACK;
     m_colourBackground = *wxWHITE;
     m_textureBackground = false;
+
+	m_activeTool = "";
 
     m_canvas = new MyCanvas( this );
 	m_canvas->Show();
@@ -104,36 +108,78 @@ void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
     wxDC &dc = pdc ;
 
     m_owner->PrepareDC(dc);
+	
+	std::vector<wxString> foob; //foob!@
+	char buffer[128];
+
+	if (m_owner->m_activeTool == "") return;
 
 	if (m_owner->m_activeTool == "clear")
 	{
-		dc.Clear();
+		objects.clear();
 	}
 
 	if (m_owner->m_activeTool == "line")
 	{
-		dc.SetPen( wxPen( wxT("black"), 1, wxSOLID) );
-		dc.DrawLine( m_startPos.x, m_startPos.y, x, y );
+		foob.push_back(_T("line"));
+		sprintf(buffer, "%d", m_startPos.x);
+		foob.push_back(_T(buffer));
+		sprintf(buffer, "%d", m_startPos.y);
+		foob.push_back(_T(buffer));
+		sprintf(buffer, "%d", x);
+		foob.push_back(_T(buffer));
+		sprintf(buffer, "%d", y);
+		foob.push_back(_T(buffer));
 	}
 
 	if (m_owner->m_activeTool == "rect")
 	{
-		dc.SetPen( wxPen( wxT("black"), 1, wxSOLID) );
-		dc.SetBrush( *wxGREY_BRUSH );
-		dc.DrawRectangle(m_startPos.x, m_startPos.y, x-m_startPos.x, y-m_startPos.y);
+		foob.push_back(_T("rect"));
+		sprintf(buffer, "%d", m_startPos.x);
+		foob.push_back(_T(buffer));
+		sprintf(buffer, "%d", m_startPos.y);
+		foob.push_back(_T(buffer));
+		sprintf(buffer, "%d", x-m_startPos.x);
+		foob.push_back(_T(buffer));
+		sprintf(buffer, "%d", y-m_startPos.y);
+		foob.push_back(_T(buffer));
 	}
 
 	if (m_owner->m_activeTool == "circ")
 	{
-		dc.SetPen( wxPen( wxT("black"), 1, wxSOLID) );
-		dc.SetBrush( *wxGREY_BRUSH );
-		dc.DrawEllipse(m_startPos.x, m_startPos.y, x-m_startPos.x, y-m_startPos.y);
+		foob.push_back(_T("circ"));
+		sprintf(buffer, "%d", m_startPos.x);
+		foob.push_back(_T(buffer));
+		sprintf(buffer, "%d", m_startPos.y);
+		foob.push_back(_T(buffer));
+		sprintf(buffer, "%d", x-m_startPos.x);
+		foob.push_back(_T(buffer));
+		sprintf(buffer, "%d", y-m_startPos.y);
+		foob.push_back(_T(buffer));
 	}
 
 	if (m_owner->m_activeTool == "free")
 	{
 		dc.SetPen( wxPen( wxT("black"), 1, wxSOLID) );
 		dc.DrawLine( m_startPos.x, m_startPos.y, x, y );
+	}
+
+	if (m_owner->m_activeTool != "clear") objects.push_back(foob);
+
+	for (int i = 0; i < objects.size(); i++)
+	{
+		dc.SetPen( wxPen( wxT("black"), 1, wxSOLID) );
+		dc.SetBrush( *wxGREY_BRUSH );
+		if (objects[i][0] == "line") {
+			dc.DrawLine( atoi(objects[i][1]), atoi(objects[i][2]), atoi(objects[i][3]), atoi(objects[i][4]) );
+		}
+		else if (objects[i][0] == "rect") {
+			dc.DrawRectangle( atoi(objects[i][1]), atoi(objects[i][2]), atoi(objects[i][3]), atoi(objects[i][4]) );
+		}
+		else if (objects[i][0] == "circ") {
+			dc.DrawEllipse( atoi(objects[i][1]), atoi(objects[i][2]), atoi(objects[i][3]), atoi(objects[i][4]) );
+		}
+
 	}
 }
 
@@ -153,10 +199,14 @@ void MyCanvas::OnMouseMove(wxMouseEvent &event)
 
 void MyCanvas::SetStartPos(wxMouseEvent &WXUNUSED(event))
 {
-	m_startPos = wxPoint(x, y);
+	if (m_owner->m_parent->IsServer()) {
+		m_startPos = wxPoint(x, y);
+	}
 }
 
 void MyCanvas::SetEndPos(wxMouseEvent &WXUNUSED(event))
 {
-    Refresh();
+	if (m_owner->m_parent->IsServer()) {
+	    Refresh();
+	}
 }
