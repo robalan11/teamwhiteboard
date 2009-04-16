@@ -58,7 +58,7 @@ textWindow::textWindow(const wxString& title)
 	// Second section, text window
 	wxBoxSizer *hbox2 = new wxBoxSizer(wxHORIZONTAL);
 	tc2 = new wxTextCtrl(panel, wxID_ANY, wxT(""), 
-		wxPoint(-1, -1), wxSize(-1, -1), wxTE_MULTILINE | wxTE_READONLY);
+		wxPoint(-1, -1), wxSize(-1, -1), wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH);
 
 	hbox2->Add(tc2, 1, wxEXPAND);
 	vbox->Add(hbox2, 1, wxLEFT | wxRIGHT | wxEXPAND, 10);
@@ -110,21 +110,33 @@ void textWindow::OnQuit(wxCommandEvent& WXUNUSED(event))
     Quit();
 }
 
-void ParseCommand(wxString command) {
+void ParseCommand(wxString line) {
+	wxString command = line.SubString(0, line.Index(' ')-1);
+	wxString remainder = line.SubString(line.Index(' ') + 1, line.length()-1);
 	wxRegEx comparator;
-	comparator.Compile("^/me .+", 0);
+	comparator.Compile("^/me$", 0);
 	if (comparator.Matches(command)) {
-		command = name + _T(" ") + command.substr(4, command.length()-4);
-		tc2->AppendText(command);
+		wxString output = name + _T(" ") + remainder;
+		tc2->AppendText(output);
 		if (server){
 			// Send it to all clients
 			for (int i = 0; i < m_numClients; i++){
-				m_server_out[i]->WriteMsg(command.c_str(), (wxStrlen(command) + 1) * sizeof(wxChar));
+				m_server_out[i]->WriteMsg(output.c_str(), (wxStrlen(output) + 1) * sizeof(wxChar));
 			}
 		}else{
-			m_sock_out->WriteMsg(command.c_str(), (wxStrlen(command) + 1) * sizeof(wxChar));
+			m_sock_out->WriteMsg(output.c_str(), (wxStrlen(output) + 1) * sizeof(wxChar));
 		}
+		return;
 	}
+
+	comparator.Compile("^/kick$", 0);
+	if (comparator.Matches(command)) {
+
+	}
+	
+	tc2->SetDefaultStyle(wxTextAttr(*wxRED));
+	tc2->AppendText("Not a valid command.\n");
+	tc2->SetDefaultStyle(wxTextAttr(*wxBLACK));
 }
 
 // The "text enter" event handler
@@ -142,9 +154,22 @@ void textWindow::OnTextEnter(wxCommandEvent& WXUNUSED(event))
 
 	// Make sure something is entered
 	if (input != "\n"){
+		time_t rawtime;
+		struct tm * timeinfo;
+		char* timestr = (char*)malloc(10*sizeof(char));
+
+		time ( &rawtime );
+		timeinfo = localtime ( &rawtime );
+		sprintf(timestr, "%02d:%02d:%02d", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+
 		input = name + _T(": ") + input;
+		input = _T(") ") + input;
+		input = _T(timestr) + input;
+		input = _T("(") + input;
 		tc2->AppendText(input);
 		tc3->Clear();
+
+		free(timestr);
 		
 		// Send it over the network
 		if (server){
