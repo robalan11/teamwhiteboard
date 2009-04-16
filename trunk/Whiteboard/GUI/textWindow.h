@@ -1,6 +1,7 @@
 #include <wx/wx.h>
 #include <wx/socket.h>
 #include <wx/menu.h>
+#include <wx/regex.h>
 
 /**
  * This is the chat window.  The user can enter and send text, like with any 
