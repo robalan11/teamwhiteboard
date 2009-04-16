@@ -34,6 +34,7 @@ wxTextCtrl *tc3;
 wxStaticText *headerText;
 StatusWindow *status;
 AdminWindow *admin;
+wxString names[MAX_CLIENTS];
 
 // The constructor
 textWindow::textWindow(const wxString& title)
@@ -170,7 +171,7 @@ void textWindow::OnTextEnter(wxCommandEvent& WXUNUSED(event))
 		tc3->Clear();
 
 		free(timestr);
-		
+
 		// Send it over the network
 		if (server){
 			// Send it to all clients
@@ -298,6 +299,9 @@ void textWindow::OnServerEvent(wxSocketEvent& event)
 	wxChar *text = new wxChar[100];
 	sock->ReadMsg(text, sizeof(wxChar)*100).LastCount();
 
+	// Add the person to the list
+	admin->AddPerson(text);
+
 	sock->SetEventHandler(*this, SOCKET_ID);
 	sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
 	sock->Notify(true);
@@ -306,6 +310,7 @@ void textWindow::OnServerEvent(wxSocketEvent& event)
 	status->Append(_T(" has joined\n"));
 
 	m_server_out[m_numClients] = sock;
+	names[m_numClients] = text;
 	m_numClients++;
 }
 
@@ -341,20 +346,44 @@ void textWindow::OnSocketEvent(wxSocketEvent& event)
 			}
 			case wxSOCKET_LOST:
 			{
-			m_numClients--;
+				// If you're the server, remove the socket from the list
+				if (server){
+					bool found = false;
+					for (int i = 0; i < m_numClients; i++){
+						if (found){
+							if (i != MAX_CLIENTS - 1){
+								m_server_out[i] = m_server_out[i+1];
+								names[i] = names[i+1];
+							}
+						}else{
+							if (m_server_out[i] == sock){
+								found = true;
+								admin->RemovePerson(names[i]);
+								status->Append(names[i]);
+								status->Append(": Left.\n");
+								if (i != MAX_CLIENTS - 1){
+									m_server_out[i] = m_server_out[i+1];
+									names[i] = names[i+1];
+								}
+							}
+						}
+					}
+					m_numClients--;
+					
+				}
 
-			// Destroy() should be used instead of delete wherever possible,
-			// due to the fact that wxSocket uses 'delayed events' (see the
-			// documentation for wxPostEvent) and we don't want an event to
-			// arrive to the event handler (the frame, here) after the socket
-			// has been deleted. Also, we might be doing some other thing with
-			// the socket at the same time; for example, we might be in the
-			// middle of a test or something. Destroy() takes care of all
-			// this for us.
+				// Destroy() should be used instead of delete wherever possible,
+				// due to the fact that wxSocket uses 'delayed events' (see the
+				// documentation for wxPostEvent) and we don't want an event to
+				// arrive to the event handler (the frame, here) after the socket
+				// has been deleted. Also, we might be doing some other thing with
+				// the socket at the same time; for example, we might be in the
+				// middle of a test or something. Destroy() takes care of all
+				// this for us.
 
-			status->Append(_T("Deleting socket.\n\n"));
-			sock->Destroy();
-			break;
+				status->Append(_T("Deleting socket.\n\n"));
+				sock->Destroy();
+				break;
 			}
 			default: ;
 		}
