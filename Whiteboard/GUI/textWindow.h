@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include "prompt.h"
 
 /**
  * This is the chat window.  The user can enter and send text, like with any 

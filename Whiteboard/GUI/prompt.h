@@ -1,3 +1,5 @@
+#ifndef __PROMPT
+#define __PROMPT
 #include <wx/wx.h>
 
 /**
@@ -40,3 +42,5 @@ private:
 	 */
     DECLARE_EVENT_TABLE()
 };
+
+#endif
