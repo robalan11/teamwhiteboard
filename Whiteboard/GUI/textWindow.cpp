@@ -35,6 +35,9 @@ wxStaticText *headerText;
 StatusWindow *status;
 AdminWindow *admin;
 wxString names[MAX_CLIENTS];
+wxString IPs[MAX_CLIENTS];
+wxString banlist[128];
+int num_banned;
 
 // The constructor
 textWindow::textWindow(const wxString& title)
@@ -83,6 +86,9 @@ textWindow::textWindow(const wxString& title)
 	wxButton *btn2 = new wxButton(panel, wxID_EXIT, wxT("Close"));
 	hbox4->Add(btn2, 0, wxLEFT | wxBOTTOM , 5);
 	vbox->Add(hbox4, 0, wxALIGN_RIGHT | wxRIGHT, 10);
+
+	// Numbers
+	num_banned = 0;
 
 	// Create the status window
 	status = new StatusWindow("Status");
@@ -142,6 +148,19 @@ void ParseCommand(wxString line) {
 		for (int i = 0; i < m_numClients; i++) {
 			if (names[i].Cmp(remainder)) {
 				m_server_out[i]->WriteMsg("/disconnect", 12 * sizeof(wxChar));
+				break;
+			}
+		}
+		return;
+	}
+
+	comparator.Compile("^/ban$", 0);
+	if (server && comparator.Matches(command)) {
+		for (int i = 0; i < m_numClients; i++) {
+			if (names[i].Cmp(remainder)) {
+				m_server_out[i]->WriteMsg("/disconnect", 12 * sizeof(wxChar));
+				banlist[num_banned] = IPs[i];
+				num_banned++;
 				break;
 			}
 		}
@@ -219,6 +238,21 @@ void textWindow::OnTextEnter(wxCommandEvent& WXUNUSED(event))
 // Sets up a client
 void textWindow::setupClient()
 {
+	// Find my address!
+	wxIPV4address remote;
+	remote.Hostname(_T("www.wxwidgets.org"));
+	remote.Service(80);
+ 
+	wxIPV4address local;
+ 
+	wxSocketClient client;
+	if(client.Connect(remote)) client.GetLocal(local);
+
+	wxIPV4address addr;
+	addr.Service(3000);
+	addr.Hostname(local.IPAddress());
+	status->Append(_T("Server created.  IP: ") + addr.IPAddress() + _T("\n"));
+
 	// Create the socket
 	m_sock_out = new wxSocketClient();
 
@@ -241,9 +275,11 @@ void textWindow::setupClient()
 	
 	// Test connection
 	if (m_sock_out->IsConnected()){
-		status->Append(_T("Connection established\n"));
+		// Send IP
+		m_sock_out->WriteMsg(addr.IPAddress().c_str(), (wxStrlen(addr.IPAddress()) + 1) * sizeof(wxChar));
 		// Send name
 		m_sock_out->WriteMsg(name.c_str(), (wxStrlen(name) + 1) * sizeof(wxChar));
+		status->Append(_T("Connection established\n"));
 	}else{
 		m_sock_out->Close();
 		status->Append(_T("Failed ! Unable to connect\n"));
@@ -328,6 +364,18 @@ void textWindow::OnServerEvent(wxSocketEvent& event)
 	}
 
 	// Get the name of the person who connected
+	wxChar *IP = new wxChar[16];
+	sock->ReadMsg(IP, sizeof(wxChar)*16).LastCount();
+	for (int i = 0; i < num_banned; i++){
+		if (!strcmp(IP, banlist[i])) {
+			sock->WriteMsg("/hellno", 8 * sizeof(wxChar));
+			status->Append(_T("Connection from banned IP "));
+			status->Append(IP);
+			status->Append(_T(" refused.\n"));
+			return;
+		}
+	}
+
 	wxChar *text = new wxChar[100];
 	sock->ReadMsg(text, sizeof(wxChar)*100).LastCount();
 
@@ -343,6 +391,7 @@ void textWindow::OnServerEvent(wxSocketEvent& event)
 
 	m_server_out[m_numClients] = sock;
 	names[m_numClients] = text;
+	IPs[m_numClients] = IP;
 	m_numClients++;
 }
 
