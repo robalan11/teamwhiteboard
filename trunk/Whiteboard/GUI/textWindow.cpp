@@ -1,6 +1,7 @@
 #include "textWindow.h"
 #include "statusWindow.h"
 #include "admin.h"
+#include "whiteboard.h"
 
 // Defines
 #define SERVER_ID 100
@@ -34,6 +35,7 @@ wxTextCtrl *tc3;
 wxStaticText *headerText;
 StatusWindow *status;
 AdminWindow *admin;
+WhiteboardWindow *whiteboard;
 wxString names[MAX_CLIENTS];
 wxString IPs[MAX_CLIENTS];
 wxString banlist[128];
@@ -97,6 +99,10 @@ textWindow::textWindow(const wxString& title)
 	//Create the admin window
 	admin = new AdminWindow("People");
 	admin->Show(true);
+
+	//Create the whiteboard window
+	whiteboard = new WhiteboardWindow("Whiteboard");
+	whiteboard->Show(true);
 	
 	// Wrap it up
 	panel->SetSizer(vbox);
@@ -108,6 +114,7 @@ void textWindow::Quit()
 {
 	status->Close(true);
 	admin->Close(true);
+	whiteboard->Close(true);
 	Close(true);
 }
 
