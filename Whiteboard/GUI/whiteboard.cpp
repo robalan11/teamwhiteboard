@@ -81,10 +81,15 @@ void WhiteboardWindow::Free(wxCommandEvent &WXUNUSED(event))
 
 void WhiteboardWindow::Undo(wxCommandEvent &WXUNUSED(event))
 {
-	SetStatusText(_T("Last command undone."));
-	m_activeTool = "";
-	m_canvas->objects.pop_back();
-	m_canvas->Refresh();
+	if (m_canvas->objects.size() > 0) {
+		SetStatusText(_T("Last command undone."));
+		m_activeTool = "undo";
+		m_canvas->objects.pop_back();
+		m_canvas->Refresh();
+	}
+	else {
+		m_activeTool = "";
+	}
 }
 
 BEGIN_EVENT_TABLE(WhiteboardWindow, wxFrame)
@@ -111,6 +116,7 @@ MyCanvas::MyCanvas(WhiteboardWindow *parent) : wxWindow(parent, wxID_ANY, wxPoin
 {
 	m_owner = parent;
     m_clip = false;
+	drawing = false;
 }
 
 void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
@@ -176,7 +182,12 @@ void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
 			dc.DrawLine( m_startPos.x, m_startPos.y, x, y );
 		}
 
-		if (m_owner->m_activeTool != "clear" && m_owner->m_activeTool != "") objects.push_back(foob);
+		if (m_owner->m_activeTool == "undo")
+		{
+			foob.push_back(_T("undo"));
+		}
+
+		if (m_owner->m_activeTool != "clear" && m_owner->m_activeTool != "undo") objects.push_back(foob);
 		
 		m_owner->m_parent->sendNewShape(foob);
 	}
@@ -225,12 +236,16 @@ void MyCanvas::SetStartPos(wxMouseEvent &WXUNUSED(event))
 {
 	if (m_owner->m_parent->IsServer()) {
 		m_startPos = wxPoint(x, y);
+		drawing = true;
 	}
 }
 
 void MyCanvas::SetEndPos(wxMouseEvent &WXUNUSED(event))
 {
 	if (m_owner->m_parent->IsServer()) {
-	    Refresh();
+		if (drawing) {
+		    Refresh();
+			drawing = false;
+		}
 	}
 }

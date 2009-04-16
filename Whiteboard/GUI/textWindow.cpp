@@ -548,6 +548,9 @@ void textWindow::OnSocketEvent(wxSocketEvent& event)
 					if (shape[0] == _T("clear")){
 						whiteboard->m_canvas->objects.clear();
 						whiteboard->m_canvas->Refresh();
+					}else if (shape[0] == _T("undo")) {
+						whiteboard->m_canvas->objects.pop_back();
+						whiteboard->m_canvas->Refresh();
 					}else{
 						whiteboard->m_canvas->addNewShape(shape);
 					}
