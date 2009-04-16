@@ -448,7 +448,7 @@ void textWindow::OnServerEvent(wxSocketEvent &WXUNUSED(event))
 	sock->ReadMsg(IP, sizeof(wxChar)*16).LastCount();
 	for (int i = 0; i < num_banned; i++){
 		if (!strcmp(IP, banlist[i])) {
-			sock->WriteMsg("/hellno", 8 * sizeof(wxChar));
+			sock->WriteMsg("/disconnect", 8 * sizeof(wxChar));
 			status->Append(_T("Connection from banned IP "));
 			status->Append(IP);
 			status->Append(_T(" refused.\n"));
