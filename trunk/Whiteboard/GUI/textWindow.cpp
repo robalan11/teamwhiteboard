@@ -318,6 +318,34 @@ void textWindow::setupClient()
 				break;
 		}
 		admin->updateList(list);
+
+		// Get whiteboard
+		std::vector< std::vector<wxString> > objects;
+		std::vector<wxString> shape;
+		wxString message;
+		while (1){
+			wxChar *text = new wxChar[50];
+			m_sock_out->ReadMsg(text, sizeof(wxChar) * 50).LastCount();
+			wxString test(text);
+			if (test != _T("/done")){
+				shape.push_back(test);
+				m_sock_out->ReadMsg(text, sizeof(wxChar) * 50).LastCount();
+				shape.push_back((wxString)text);
+				m_sock_out->ReadMsg(text, sizeof(wxChar) * 50).LastCount();
+				shape.push_back((wxString)text);
+				m_sock_out->ReadMsg(text, sizeof(wxChar) * 50).LastCount();
+				shape.push_back((wxString)text);
+				m_sock_out->ReadMsg(text, sizeof(wxChar) * 50).LastCount();
+				shape.push_back((wxString)text);
+				objects.push_back(shape);
+				shape.clear();
+			}else
+				break;
+		}
+		if (objects.size() != 0){
+			whiteboard->m_canvas->objects = objects;
+			whiteboard->m_canvas->Refresh();
+		}
 	}else{
 		m_sock_out->Close();
 		status->Append(_T("Failed ! Unable to connect\n"));
@@ -452,6 +480,14 @@ void textWindow::OnServerEvent(wxSocketEvent &WXUNUSED(event))
 		m_server_out[i]->WriteMsg(done.c_str(), (wxStrlen(done) + 1) * sizeof(wxChar));
 	}
 	
+	// Send the entire friggin whiteboard.  Sheesh.  I mean, come on
+	for (unsigned int i = 0; i < whiteboard->m_canvas->objects.size(); i++){
+		std::vector<wxString> shape = whiteboard->m_canvas->objects[i];
+		for (unsigned int j = 0; j < shape.size(); j++){
+			sock->WriteMsg(shape[j].c_str(), (wxStrlen(shape[j]) + 1) * sizeof(wxChar));
+		}
+	}
+	sock->WriteMsg(done.c_str(), (wxStrlen(done) + 1) * sizeof(wxChar));
 
 	sock->SetEventHandler(*this, SOCKET_ID);
 	sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);

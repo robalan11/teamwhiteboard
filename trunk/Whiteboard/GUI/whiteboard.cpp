@@ -122,61 +122,64 @@ void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
 	
 	std::vector<wxString> foob; //foob!@
 	char buffer[128];
+	if (m_owner->m_parent->IsServer()){
+		if (m_owner->m_activeTool == "") return;
 
-	if (m_owner->m_activeTool == "clear")
-	{
-		objects.clear();
-		foob.push_back(_T("clear"));
+		if (m_owner->m_activeTool == "clear")
+		{
+			objects.clear();
+			foob.push_back(_T("clear"));
+		}
+
+		if (m_owner->m_activeTool == "line")
+		{
+			foob.push_back(_T("line"));
+			sprintf(buffer, "%d", m_startPos.x);
+			foob.push_back(_T(buffer));
+			sprintf(buffer, "%d", m_startPos.y);
+			foob.push_back(_T(buffer));
+			sprintf(buffer, "%d", x);
+			foob.push_back(_T(buffer));
+			sprintf(buffer, "%d", y);
+			foob.push_back(_T(buffer));
+		}
+
+		if (m_owner->m_activeTool == "rect")
+		{
+			foob.push_back(_T("rect"));
+			sprintf(buffer, "%d", m_startPos.x);
+			foob.push_back(_T(buffer));
+			sprintf(buffer, "%d", m_startPos.y);
+			foob.push_back(_T(buffer));
+			sprintf(buffer, "%d", x-m_startPos.x);
+			foob.push_back(_T(buffer));
+			sprintf(buffer, "%d", y-m_startPos.y);
+			foob.push_back(_T(buffer));
+		}
+
+		if (m_owner->m_activeTool == "circ")
+		{
+			foob.push_back(_T("circ"));
+			sprintf(buffer, "%d", m_startPos.x);
+			foob.push_back(_T(buffer));
+			sprintf(buffer, "%d", m_startPos.y);
+			foob.push_back(_T(buffer));
+			sprintf(buffer, "%d", x-m_startPos.x);
+			foob.push_back(_T(buffer));
+			sprintf(buffer, "%d", y-m_startPos.y);
+			foob.push_back(_T(buffer));
+		}
+
+		if (m_owner->m_activeTool == "free")
+		{
+			dc.SetPen( wxPen( wxT("black"), 1, wxSOLID) );
+			dc.DrawLine( m_startPos.x, m_startPos.y, x, y );
+		}
+
+		if (m_owner->m_activeTool != "clear" && m_owner->m_activeTool != "") objects.push_back(foob);
+		
+		m_owner->m_parent->sendNewShape(foob);
 	}
-
-	if (m_owner->m_activeTool == "line")
-	{
-		foob.push_back(_T("line"));
-		sprintf(buffer, "%d", m_startPos.x);
-		foob.push_back(_T(buffer));
-		sprintf(buffer, "%d", m_startPos.y);
-		foob.push_back(_T(buffer));
-		sprintf(buffer, "%d", x);
-		foob.push_back(_T(buffer));
-		sprintf(buffer, "%d", y);
-		foob.push_back(_T(buffer));
-	}
-
-	if (m_owner->m_activeTool == "rect")
-	{
-		foob.push_back(_T("rect"));
-		sprintf(buffer, "%d", m_startPos.x);
-		foob.push_back(_T(buffer));
-		sprintf(buffer, "%d", m_startPos.y);
-		foob.push_back(_T(buffer));
-		sprintf(buffer, "%d", x-m_startPos.x);
-		foob.push_back(_T(buffer));
-		sprintf(buffer, "%d", y-m_startPos.y);
-		foob.push_back(_T(buffer));
-	}
-
-	if (m_owner->m_activeTool == "circ")
-	{
-		foob.push_back(_T("circ"));
-		sprintf(buffer, "%d", m_startPos.x);
-		foob.push_back(_T(buffer));
-		sprintf(buffer, "%d", m_startPos.y);
-		foob.push_back(_T(buffer));
-		sprintf(buffer, "%d", x-m_startPos.x);
-		foob.push_back(_T(buffer));
-		sprintf(buffer, "%d", y-m_startPos.y);
-		foob.push_back(_T(buffer));
-	}
-
-	if (m_owner->m_activeTool == "free")
-	{
-		dc.SetPen( wxPen( wxT("black"), 1, wxSOLID) );
-		dc.DrawLine( m_startPos.x, m_startPos.y, x, y );
-	}
-
-	if (m_owner->m_activeTool != "clear" && m_owner->m_activeTool != "") objects.push_back(foob);
-	
-	m_owner->m_parent->sendNewShape(foob);
 
 	for (unsigned int i = 0; i < objects.size(); i++)
 	{
@@ -197,8 +200,8 @@ void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
 
 void MyCanvas::addNewShape(std::vector<wxString> shape)
 {
-	//wxString temp = m_owner->m_activeTool;
-	//m_owner->m_activeTool = shape[0];
+	wxString temp = m_owner->m_activeTool;
+	m_owner->m_activeTool = shape[0];
 	objects.push_back(shape);
 	Refresh();
 	//m_owner->m_activeTool = temp;
