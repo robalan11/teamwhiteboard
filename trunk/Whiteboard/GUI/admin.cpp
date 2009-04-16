@@ -22,6 +22,26 @@ void AdminWindow::RemovePerson(wxString name)
 	people_list->DeleteItem(people_list->FindItem(-1, name, false));
 }
 
+std::vector<wxString> AdminWindow::getList()
+{
+	std::vector<wxString> list;
+	for (int i = 0; i < people_list->GetItemCount(); i++){
+		list.push_back(people_list->GetItemText(i));
+	}
+
+	return list;
+}
+
+void AdminWindow::updateList(std::vector<wxString> list)
+{
+	people_list->ClearAll();
+	for (unsigned int i = 0; i < list.size(); i++){
+		wxListItem item;
+		item.SetText(list[i]);
+		people_list->InsertItem(item);
+	}
+}
+
 // The append function
 void AdminWindow::OnKickEvent(wxSocketEvent& event)
 {

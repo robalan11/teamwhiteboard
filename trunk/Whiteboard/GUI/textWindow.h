@@ -5,6 +5,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string>
+#include <vector>
 
 /**
  * This is the chat window.  The user can enter and send text, like with any 
