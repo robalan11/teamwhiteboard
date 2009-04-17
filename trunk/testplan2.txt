@@ -1,0 +1,307 @@
+Test Plan for Project Whiteboard
+
+
+The purpose of this test plan is to demonstrate the ability of Project Whiteboard to meet customer requirements and perform to use case specifications. The SUT consists of the Beta release build of Project Whiteboard. Due to the assumed lack of programming education assumed in the target end user, we will use a black box approach to testing. Specifically, it will be a a specification or model based approach, in which the test cases are derived from the project use cases. The testing will be completed by members of Team Whiteboard. Of the 16 items to be tested, a successful system test will be defined as 15 of 16 items passing test criteria. The system will be tested in multiple rounds in order to gain a large sample of test items from which we will be able to make an informed conclusion about system performance.
+
+Features to be tested:
+
+Network connection
+Server start lecture
+Client join lecture
+Server ban client
+Server kick client
+Server end lecture
+Send message
+Draw on whiteboard
+
+Features not to be tested:
+
+Voice communication
+Save lecture session
+Whiteboard formula/math/graph tool
+Ticket queue
+In-program documentation
+"Time limit exceeded" messages
+
+Test items:
+
+Run Program
+Server start lecture
+Client join lecture with correct IP
+Client join lecture with incorrect IP
+Server ban client
+Client rejoin after ban
+Server unban client
+Client rejoin after unban
+Server kick client
+Client rejoin after kick
+Server end lecture
+Client rejoin after end
+C->S send message
+S->C send message
+Server draw on Whiteboard
+Invalid command
+
+
+Test item specifications
+
+
+Item PW1
+Run program
+
+Preconditions:	All necessary program files available
+			User is running Windows XP or better
+
+1. User clicks on program executable icon
+
+Pass: 	Program initializes and loads without error within 1 minute
+Fail: 	Program does not initialize
+		Program initializes with error
+
+Item PW2
+Server start lecture
+
+Preconditions:	Program is running
+
+1. User chooses Server
+2. User types in server name
+2. User presses Enter
+
+Pass: 	Server initializes without error within 10 seconds
+		Chat window and whiteboard are loaded within 10 seconds
+Fail: 	Server does not initialize
+		Chat window does not load
+		Whiteboard does not load
+		Server initializes with error
+
+Item PW3
+Client join lecture with correct IP
+
+Preconditions:	Program is running
+			Target server is initialized and exists
+			Client possesses internet connection
+
+1. User chooses Client
+2. User types in client name
+3. User types correct IP address of server
+4. User presses Enter
+
+Pass: 	Client connects to server within 10 seconds
+		Chat window and whiteboard are loaded within 10 seconds
+Fail: 	Client does not connect to server
+		Chat window does not load
+		Whiteboard does not load
+		Client connects with error
+		Server receives an error
+
+Item PW4
+Client join lecture with incorrect IP
+
+Preconditions:	Program is running
+			Target server is initialized and exists
+			Client possesses internet connection
+
+1. User chooses Client
+2. User types in client name
+3. User types in incorrect IP address of server
+4. User presses Enter
+
+Pass: 	Client does not connect to server after 5 seconds
+Fail: 	Client connects to nonexistent "server
+		Chat window and whiteboard are loaded
+		Client receives an error
+
+Item PW5
+Server ban client
+
+Preconditions:	Program is running
+			Server is initialized and exists
+			Client is connected to server
+
+2. User types "/ban <client name>" in message box
+3. User presses Enter
+
+Postconditions: Client cannot return to lecture
+
+Pass: 	Client is removed from lecture within 5 seconds
+Fail: 	Client is not removed from lecture
+		Client receives an error
+		Server receives an error
+
+Item PW6
+Client rejoin lecture after ban
+
+Preconditions:	Program is running
+			Server is initialized and exists
+			Client has been banned from server
+
+1. User types in correct IP address of server
+2. User presses Enter
+
+Pass: 	Client does not connect to server after 5 seconds
+Fail: 	Client connects to server
+		Chat window and whiteboard are loaded
+		Client receives an error
+		Server receives an error
+
+Item PW7
+Server unban client
+
+Preconditions:	Program is running
+			Server is initialized and exists
+			Client has been banned from server
+
+1. User types "/unban <client name>" in message box
+2. User presses Enter
+
+Postconditions:	Client can return to lecture
+
+Pass:		Client is able to return to lecture
+Fail:		Client cannot return to lecture
+		Client receives an error
+		Server receives an error
+
+Item PW8
+Client rejoin lecture after unban
+
+Preconditions:	Program is running
+			Server is initialized and exists
+			Client has been unbanned from server
+
+1. User types in correct IP address of server
+2. User presses Enter
+
+Pass: 	Client connects to server within 10 seconds
+		Chat window and whiteboard are loaded within 10 seconds
+Fail: 	Client does not connect to server
+		Chat window does not load
+		Whiteboard does not load
+		Client receives an error
+		Server receives an error
+
+Item PW9
+Server kick client
+
+Preconditions:	Program is running
+			Server is initialized and exists
+			Client is connected to server
+
+1. User types "/kick <client name>" in message box
+3. User presses Enter
+
+Postconditions: Client can return to lecture
+
+Pass: 	Client is removed from lecture within 5 seconds
+Fail: 	Client is not removed from lecture
+		Client receives an error
+		Server receives an error
+
+Item PW10
+Client rejoin lecture after kick
+
+Preconditions:	Program is running
+			Server is initialized and exists
+			Client has been kicked from server
+
+1. User types in correct IP address of server
+2. User presses Enter
+
+Pass: 	Client connects to server within 10 seconds
+		Chat window and whiteboard are loaded within 10 seconds
+Fail: 	Client does not connect to server
+		Chat window does not load
+		Whiteboard does not load
+		Client receives an error
+		Server receives an error
+
+Item PW11
+Server end lecture
+
+Preconditions:	Program is running
+		Server is initialized and exists
+
+1. User closes Server window
+
+Postconditions: All clients removed from lecture
+
+Pass: 	Server disconnects within 10 seconds
+		Chat window closes within 10 seconds 
+		Whiteboard closes within 10 seconds
+Fail: 	Chat window does not close
+		Whiteboard does not close
+		Server stays connected
+		Client receives an error
+		Server receives an error
+
+Item PW12
+Client rejoin lecture after end
+
+Preconditions:	Program is running
+			Server does not exist
+
+1. User types in correct IP address of server
+2. User presses Enter
+
+Pass: 	Client does not connect to server after 5 seconds
+Fail: 	Client connects to non-existent "server"
+		Client receives an error
+
+Item PW13
+C->S send message
+
+Preconditions:	Program is running
+			Server is initialized and exists
+			Client is connected to server
+
+1. User types a message in message box
+2. User presses Enter
+
+Postconditions: User message box is cleared
+
+Pass:		Server receives message in chat window within 5 seconds
+Fail:		Server does not receive message
+		Client receives an error
+		Server receives an error
+
+Item PW14
+S->C send message within character limit
+
+Preconditions:	Program is running
+			Server is initialized and exists
+			Client is connected to server
+
+1. User types a message in message box
+2. User presses Enter
+
+Postconditions: User message box is cleared
+
+Pass:		Client receives message in chat window within 5 seconds
+Fail:		Client does not receive message
+		Client receives an error
+		Server receives an error
+
+Item PW15
+Server draw on Whiteboard
+
+Preconditions:	Program is running
+			Server is initialized and exists
+			Client is connected to server
+
+1. User draws on Whiteboard with each drawing tool
+
+Pass: 	Whiteboard drawings are visible to client within 5 seconds
+		Whiteboard drawings are visible to server within 1 second
+Fail:		Whiteboard drawings are invisible to client
+		Whiteboard drawings are invisible to server
+		Use of any drawing tool produces an error
+
+Item PW16
+Invalid command
+
+Preconditions:	Program is running
+
+1. User types in a command that cannot be executed
+
+Pass: 	Program produces an error
+Fail: 	Program crashes or otherwise fails
+
