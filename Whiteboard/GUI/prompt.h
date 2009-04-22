@@ -15,7 +15,7 @@ public:
 	/**
 	 * The constructor.
 	 */
-	Prompt(const wxString& title, wxFrame *parent);
+	Prompt(const wxString& title, wxFrame* parent);
 
 	/**
 	 * Event handler for the OK button.  It checks to make sure all the 

@@ -24,28 +24,28 @@ class TextWindow;
 class MyCanvas: public wxWindow
 {
 public:
-    MyCanvas( WhiteboardWindow *parent );
+    MyCanvas( WhiteboardWindow* parent );
 
 	/**
 	 * Sets the start position when the left mouse button is pressed
 	 */
-	void SetStartPos(wxMouseEvent &event);
+	void SetStartPos(wxMouseEvent& event);
 
 	/**
 	 * Draw the right thing based on selected tool, start position,
 	 * and current position.
 	 */
-	void SetEndPos(wxMouseEvent &event);
+	void SetEndPos(wxMouseEvent& event);
 
 	/**
 	 * Callback function that is run when the window is redrawn
 	 */
-    void OnPaint(wxPaintEvent &event);
+    void OnPaint(wxPaintEvent& event);
 
 	/**
 	 * Callback function that is run when the mouse is moved
 	 */
-    void OnMouseMove(wxMouseEvent &event);
+    void OnMouseMove(wxMouseEvent& event);
 
 	/**
 	 * Function that adds a shape to the collection of shapes
@@ -79,7 +79,7 @@ class WhiteboardWindow : public wxFrame
 		/**
 		 * The constructor
 		 */
-		WhiteboardWindow(const wxString& title, TextWindow *parent);
+		WhiteboardWindow(const wxString& title, TextWindow* parent);
 
 		/**
 		 * Prepares the dc
@@ -89,12 +89,12 @@ class WhiteboardWindow : public wxFrame
 		/**
 		 * Tool functions.  They each set the active tool and change the statusbar message.
 		 */
-		void Clear(wxCommandEvent &WXUNUSED(event));
-		void Line(wxCommandEvent &WXUNUSED(event));
-		void Rect(wxCommandEvent &WXUNUSED(event));
-		void Circ(wxCommandEvent &WXUNUSED(event));
-		//void Free(wxCommandEvent &WXUNUSED(event));
-		void Undo(wxCommandEvent &WXUNUSED(event));
+		void Clear(wxCommandEvent& WXUNUSED(event));
+		void Line(wxCommandEvent& WXUNUSED(event));
+		void Rect(wxCommandEvent& WXUNUSED(event));
+		void Circ(wxCommandEvent& WXUNUSED(event));
+		//void Free(wxCommandEvent& WXUNUSED(event));
+		void Undo(wxCommandEvent& WXUNUSED(event));
 		
 		int         mBackgroundMode;
 		int         mTextureBackground;
@@ -108,10 +108,10 @@ class WhiteboardWindow : public wxFrame
 		wxColour    mColourForeground,    // these are _text_ colours
 			        mColourBackground;
 		wxBrush     mBackgroundBrush;
-	    MyCanvas   *mpCanvas;
+	    MyCanvas*   mpCanvas;
 
 		wxString    mActiveTool;
-		TextWindow *mpParent;
+		TextWindow* mpParent;
 
 	private:
 

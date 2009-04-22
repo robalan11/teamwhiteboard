@@ -1,6 +1,6 @@
 #include "whiteboard.h"
 
-WhiteboardWindow::WhiteboardWindow(const wxString& title, TextWindow *parent)
+WhiteboardWindow::WhiteboardWindow(const wxString& title, TextWindow* parent)
        : wxFrame(NULL, -1, title, wxPoint(-1, -1), wxSize(640, 480), wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLIP_CHILDREN)
 {	
 	mpParent = parent;
@@ -26,17 +26,17 @@ WhiteboardWindow::WhiteboardWindow(const wxString& title, TextWindow *parent)
 	mpCanvas->Show();
 
 	//Buttons!
-	wxButton *butt_clear = new wxButton();
+	wxButton* butt_clear = new wxButton();
 	butt_clear->Create(this, 0, "Clear", wxDefaultPosition, wxSize(32,32));
-	wxButton *butt_line = new wxButton();
+	wxButton* butt_line = new wxButton();
 	butt_line->Create(this, 1, "Line", wxPoint(0,32), wxSize(32,32));
-	wxButton *butt_rect = new wxButton();
+	wxButton* butt_rect = new wxButton();
 	butt_rect->Create(this, 2, "Rect", wxPoint(0,64), wxSize(32,32));
-	wxButton *butt_circ = new wxButton();
+	wxButton* butt_circ = new wxButton();
 	butt_circ->Create(this, 3, "Circle", wxPoint(0,96), wxSize(32,32));
 	//wxButton *butt_free = new wxButton();
 	//butt_free->Create(this, 4, "Free\nDraw", wxPoint(0,128), wxSize(32,32));
-	wxButton *butt_undo = new wxButton();
+	wxButton* butt_undo = new wxButton();
 	butt_undo->Create(this, 5, "Undo", wxPoint(0,128), wxSize(32,32));
 
 }
@@ -49,37 +49,37 @@ void WhiteboardWindow::PrepareDC(wxDC& dc)
     dc.SetMapMode( mMapMode );
 }
 
-void WhiteboardWindow::Clear(wxCommandEvent &WXUNUSED(event))
+void WhiteboardWindow::Clear(wxCommandEvent& WXUNUSED(event))
 {
 	SetStatusText(_T("Clear"));
 	mActiveTool = "clear";
 }
 
-void WhiteboardWindow::Line(wxCommandEvent &WXUNUSED(event))
+void WhiteboardWindow::Line(wxCommandEvent& WXUNUSED(event))
 {
 	SetStatusText(_T("Click and drag to draw a line."));
 	mActiveTool = "line";
 }
 
-void WhiteboardWindow::Rect(wxCommandEvent &WXUNUSED(event))
+void WhiteboardWindow::Rect(wxCommandEvent& WXUNUSED(event))
 {
 	SetStatusText(_T("Click and drag to draw a rectangle."));
 	mActiveTool = "rect";
 }
 
-void WhiteboardWindow::Circ(wxCommandEvent &WXUNUSED(event))
+void WhiteboardWindow::Circ(wxCommandEvent& WXUNUSED(event))
 {
 	SetStatusText(_T("Click and drag to draw a circle."));
 	mActiveTool = "circ";
 }
 
-/*void WhiteboardWindow::Free(wxCommandEvent &WXUNUSED(event))
+/*void WhiteboardWindow::Free(wxCommandEvent& WXUNUSED(event))
 {
 	SetStatusText(_T("Click and drag to draw freely."));
 	mActiveTool = "free";
 }*/
 
-void WhiteboardWindow::Undo(wxCommandEvent &WXUNUSED(event))
+void WhiteboardWindow::Undo(wxCommandEvent& WXUNUSED(event))
 {
 	if (mpParent->IsServer()) {
 		if (mpCanvas->objects.size() > 0) {
@@ -114,17 +114,17 @@ BEGIN_EVENT_TABLE(MyCanvas, wxWindow)
 	EVT_LEFT_UP(MyCanvas::SetEndPos)
 END_EVENT_TABLE()
 
-MyCanvas::MyCanvas(WhiteboardWindow *parent) : wxWindow(parent, wxID_ANY, wxPoint(32,0), wxSize(602,431))
+MyCanvas::MyCanvas(WhiteboardWindow* parent) : wxWindow(parent, wxID_ANY, wxPoint(32,0), wxSize(602,431))
 {
 	mpOwner = parent;
     mClip = false;
 	mDrawing = false;
 }
 
-void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
+void MyCanvas::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
     wxPaintDC pdc(this);
-    wxDC &dc = pdc ;
+    wxDC& dc = pdc ;
 
     mpOwner->PrepareDC(dc);
 	
@@ -234,7 +234,7 @@ void MyCanvas::OnMouseMove(wxMouseEvent &event)
     mpOwner->SetStatusText( str );
 }
 
-void MyCanvas::SetStartPos(wxMouseEvent &WXUNUSED(event))
+void MyCanvas::SetStartPos(wxMouseEvent& WXUNUSED(event))
 {
 	if (mpOwner->mpParent->IsServer()) {
 		mStartPos = wxPoint(mX, mY);
@@ -242,7 +242,7 @@ void MyCanvas::SetStartPos(wxMouseEvent &WXUNUSED(event))
 	}
 }
 
-void MyCanvas::SetEndPos(wxMouseEvent &WXUNUSED(event))
+void MyCanvas::SetEndPos(wxMouseEvent& WXUNUSED(event))
 {
 	if (mpOwner->mpParent->IsServer()) {
 		if (mDrawing) {
