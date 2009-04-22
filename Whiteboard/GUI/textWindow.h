@@ -17,14 +17,14 @@
  * messages.
  */
 
-class textWindow : public wxFrame
+class TextWindow : public wxFrame
 {
 	public:
 
 		/**
 		 * The constructor
 		 */
-		textWindow(const wxString& title);
+		TextWindow(const wxString& title);
 
 		/**
 		 * Shuts down the chat window and the status window.
@@ -46,7 +46,7 @@ class textWindow : public wxFrame
 		 * Initializes the window.  It sets up either a client or a server, modifies 
 		 * the header and enables the window.
 		 */
-		void initialize(wxString n, wxString i);
+		void Initialize(wxString n, wxString i);
 
 		/**
 		 * Event handler for sockets.  When a socket receives input, it's displayed 
@@ -68,7 +68,7 @@ class textWindow : public wxFrame
 		/**
 		 * Sends a new shape to all connected clients
 		 */
-		void sendNewShape(std::vector<wxString>);
+		void SendNewShape(std::vector<wxString>);
 
 	private:
 
@@ -76,13 +76,13 @@ class textWindow : public wxFrame
 		 * Sets up a client.  It attempts to connect to the IP provided by the 
 		 * user.
 		 */
-		void setupClient();
+		void SetupClient();
 
 		/**
 		 * Sets up a server.  The server starts listening for connections on 
 		 * localhost.
 		 */
-		void setupServer();
+		void SetupServer();
 
 		/**
 		 * The macro for the event table.

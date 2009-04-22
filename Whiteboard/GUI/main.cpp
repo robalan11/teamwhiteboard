@@ -14,7 +14,7 @@ IMPLEMENT_APP(MyApp)
 
 bool MyApp::OnInit()
 {
-	textWindow *window = new textWindow(wxT("Chat"));
+	TextWindow* window = new TextWindow(wxT("Chat"));
 	window->Show(true);
 
 	return true;

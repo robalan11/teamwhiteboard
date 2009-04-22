@@ -18,4 +18,6 @@ public:
 	 * Appends a new line of text to the status window.
 	 */
 	void Append(const wxString& text);
+
+	wxTextCtrl* mpTextBox;
 };

@@ -37,6 +37,12 @@ public:
 
 private:
 
+	// Variables
+	wxFrame* mpParentWindow;
+	wxTextCtrl* mpNameAnswer;
+	wxComboBox* mpScAnswer;
+	wxTextCtrl* mpIpAnswer;
+
 	/**
 	 * Macro for the event handler.
 	 */
