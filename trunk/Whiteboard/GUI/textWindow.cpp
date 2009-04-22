@@ -15,32 +15,32 @@
 // Variables that need to be viewed elsewhere
 
 // Strings
-wxString gName;
-wxString gIp;
-wxString gId;
+wxString gName;		// My name
+wxString gIp;		// My IP
+wxString gId;		// My id
 
 // Networking
-bool gServer;
-wxSocketBase* gpServerOut[MAX_CLIENTS];
-wxSocketServer* gpServerIn;
-wxSocketClient* gpSockIn;
-wxSocketClient* gpSockOut;
-bool gBusy;
-int  gNumClients;
+bool gServer;						// Am I the server?
+wxSocketBase* gpServerOut[MAX_CLIENTS];	// Sockets for all the clients
+wxSocketServer* gpServerIn;			// Socket connecting to the server
+wxSocketClient* gpSockIn;			// Socket coming from a client
+wxSocketClient* gpSockOut;			// Socket going to a client
+bool gBusy;							// Busy flag
+int  gNumClients;					// Number of people connected
 
 // Window objects
-wxPanel* gpPanel = new wxPanel();
-wxTextCtrl* gpTc2;
-wxTextCtrl* gpTc3;
-wxStaticText* gpHeaderText;
-StatusWindow* gpStatus;
-AdminWindow* gpAdmin;
-WhiteboardWindow* gpWhiteboard;
-wxString gNames[MAX_CLIENTS];
-wxString gIPs[MAX_CLIENTS];
-wxString gBanlist[128];
-int gNumBanned;
-Prompt* gpPrompt;
+wxPanel* gpPanel = new wxPanel();	// Main window panel
+wxTextCtrl* gpTc2;					// Output text box
+wxTextCtrl* gpTc3;					// Input text box
+wxStaticText* gpHeaderText;			// Text at the top of the window
+StatusWindow* gpStatus;				// Status window
+AdminWindow* gpAdmin;				// Admin window
+WhiteboardWindow* gpWhiteboard;		// Whiteboard window
+wxString gNames[MAX_CLIENTS];		// Names of connected clients
+wxString gIPs[MAX_CLIENTS];			// Connected IPs (parallel to gNames)
+wxString gBanlist[128];				// IPs that are banned
+int gNumBanned;						// Number of IPs that are banned
+Prompt* gpPrompt;					// Prompt window
 
 // The constructor
 TextWindow::TextWindow(const wxString& title)

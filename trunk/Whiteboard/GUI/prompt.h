@@ -1,5 +1,5 @@
-#ifndef __PROMPT
-#define __PROMPT
+#ifndef PROMPT
+#define PROMPT
 #include <wx/wx.h>
 
 /**
@@ -38,10 +38,10 @@ public:
 private:
 
 	// Variables
-	wxFrame* mpParentWindow;
-	wxTextCtrl* mpNameAnswer;
-	wxComboBox* mpScAnswer;
-	wxTextCtrl* mpIpAnswer;
+	wxFrame* mpParentWindow;		// The window
+	wxTextCtrl* mpNameAnswer;		// The box for your name
+	wxComboBox* mpScAnswer;			// The dropdown for whether you are server or client
+	wxTextCtrl* mpIpAnswer;			// The box for the IP to connect to
 
 	/**
 	 * Macro for the event handler.

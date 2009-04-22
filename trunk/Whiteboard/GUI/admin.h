@@ -39,5 +39,5 @@ class AdminWindow : public wxFrame
 
 	private:
 
-		wxListCtrl* mpPeopleList;
+		wxListCtrl* mpPeopleList;	// The list of people connected
 };
