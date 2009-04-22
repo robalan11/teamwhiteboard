@@ -1,19 +1,16 @@
 #ifndef WHITEBOARD
 #define WHITEBOARD
 
-#include <wx/wx.h>
-#include <wx/socket.h>
-#include <wx/listctrl.h>
-#include <wx/window.h>
-#include <wx/scrolwin.h>
-#include <wx/dcclient.h>
-#include <wx/button.h>
-#include <math.h>
-#include <algorithm>
-#include "textWindow.h"
-#include "canvas.h"
-#include <vector>
-#include <stdlib.h>
+#include <wx/wx.h>			// USES lots of things (wxWidgets main file)
+#include <wx/window.h>		// HASA window
+#include <wx/dcclient.h>	// USES something
+#include <wx/button.h>		// HASA buttons
+#include <math.h>			// USES sqrt, pow
+#include <algorithm>		// USES something
+#include "textWindow.h"		// HASA reference; text window is parent
+#include "canvas.h"			// HASA canvas
+#include <vector>			// USES vectors
+#include <stdlib.h>			// USES various functions
 
 class MyCanvas;
 class TextWindow;

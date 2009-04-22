@@ -1,7 +1,7 @@
-#include <wx/wx.h>
-#include <wx/socket.h>
-#include <wx/listctrl.h>
-#include <vector>
+#include <wx/wx.h>			// USES lots of things (wxWidgets main file)
+#include <wx/socket.h>		// USES socket class
+#include <wx/listctrl.h>	// HASA list control
+#include <vector>			// USES vectors
 
 /**
  * This is the admin window.  The TA can perform administrative

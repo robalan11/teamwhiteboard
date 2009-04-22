@@ -1,4 +1,4 @@
-#include "whiteboard.h"
+#include "whiteboard.h"	// ISA whiteboard window
 
 WhiteboardWindow::WhiteboardWindow(const wxString& title, TextWindow* parent)
        : wxFrame(NULL, -1, title, wxPoint(-1, -1), wxSize(640, 480), wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLIP_CHILDREN)

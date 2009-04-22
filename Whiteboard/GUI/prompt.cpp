@@ -1,5 +1,5 @@
-#include "prompt.h"
-#include "textWindow.h"
+#include "prompt.h"		// ISA prompt
+#include "textWindow.h"	// HASA reference; text window is parent
 
 // Defines
 #define wxID_ANSWER1 3000

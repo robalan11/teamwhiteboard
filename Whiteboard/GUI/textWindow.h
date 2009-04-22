@@ -1,15 +1,15 @@
 #ifndef TEXT_WINDOW
 #define TEXT_WINDOW
 
-#include <wx/wx.h>
-#include <wx/socket.h>
-#include <wx/menu.h>
-#include <wx/regex.h>
-#include <time.h>
-#include <stdlib.h>
-#include <string>
-#include <vector>
-#include "prompt.h"
+#include <wx/wx.h>		// USES lots of things (wxWidgets main file)
+#include <wx/socket.h>	// USES socket class
+#include <wx/menu.h>	// HASA menu
+#include <wx/regex.h>	// USES regular expressions
+#include <time.h>		// USES time
+#include <stdlib.h>		// USES various functions
+#include <string>		// USES strings
+#include <vector>		// USES vectors
+#include "prompt.h"		// HASA prompt window
 
 /**
  * This is the chat window.  The user can enter and send text, like with any 

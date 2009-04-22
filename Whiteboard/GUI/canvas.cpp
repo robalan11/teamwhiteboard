@@ -1,4 +1,4 @@
-#include "canvas.h"
+#include "canvas.h"	// ISA canvas
 
 MyCanvas::MyCanvas(WhiteboardWindow* parent) : wxWindow(parent, wxID_ANY, wxPoint(32,0), wxSize(602,431))
 {

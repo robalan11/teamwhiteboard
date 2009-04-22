@@ -1,5 +1,5 @@
-#include "main.h"
-#include "textWindow.h"
+#include "main.h"		// ISA main
+#include "textWindow.h"	// HASA text window
 
 //Thank you to Onega Zhang (Google search'd) for this fix.
 #include <wx/apptrait.h>

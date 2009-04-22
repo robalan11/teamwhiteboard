@@ -1,18 +1,14 @@
 #ifndef CANVAS
 #define CANVAS
 
-#include <wx/wx.h>
-#include <wx/socket.h>
-#include <wx/listctrl.h>
-#include <wx/window.h>
-#include <wx/scrolwin.h>
-#include <wx/dcclient.h>
-#include <wx/button.h>
-#include <math.h>
-#include <algorithm>
-#include "whiteboard.h"
-#include <vector>
-#include <stdlib.h>
+#include <wx/wx.h>			// USES lots of things (wxWidgets main file)
+#include <wx/window.h>		// HASA window
+#include <wx/dcclient.h>	// USES something
+#include <math.h>			// USES sqrt, pow
+#include <algorithm>		// USES something
+#include "whiteboard.h"		// HASA reference to; whiteboard window is parent
+#include <vector>			// USES vectors
+#include <stdlib.h>			// USES various functions
 
 class WhiteboardWindow;
 
