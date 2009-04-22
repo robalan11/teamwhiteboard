@@ -65,7 +65,7 @@ Preconditions:	Program is running
 
 1. User chooses Server
 2. User types in server name
-2. User presses Enter
+3. User presses Enter
 
 Pass: 	Server initializes without error within 10 seconds
 		Chat window and whiteboard are loaded within 10 seconds
@@ -118,8 +118,8 @@ Preconditions:	Program is running
 			Server is initialized and exists
 			Client is connected to server
 
-2. User types "/ban <client name>" in message box
-3. User presses Enter
+1. User types "/ban <client name>" in message box
+2. User presses Enter
 
 Postconditions: Client cannot return to lecture
 
@@ -187,7 +187,7 @@ Preconditions:	Program is running
 			Client is connected to server
 
 1. User types "/kick <client name>" in message box
-3. User presses Enter
+2. User presses Enter
 
 Postconditions: Client can return to lecture
 
