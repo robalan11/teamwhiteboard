@@ -1,5 +1,5 @@
-#ifndef __TEXT_WINDOW
-#define __TEXT_WINDOW
+#ifndef TEXT_WINDOW
+#define TEXT_WINDOW
 
 #include <wx/wx.h>
 #include <wx/socket.h>

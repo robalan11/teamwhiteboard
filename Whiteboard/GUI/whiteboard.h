@@ -1,5 +1,5 @@
-#ifndef __WHITEBOARD
-#define __WHITEBOARD
+#ifndef WHITEBOARD
+#define WHITEBOARD
 
 #include <wx/wx.h>
 #include <wx/socket.h>
@@ -11,62 +11,13 @@
 #include <math.h>
 #include <algorithm>
 #include "textWindow.h"
+#include "canvas.h"
 #include <vector>
 #include <stdlib.h>
 
-class WhiteboardWindow;
+class MyCanvas;
 class TextWindow;
 
-/**
- * This is the Canvas!  It's where stuff that is drawn is displayed.
- */
-
-class MyCanvas: public wxWindow
-{
-public:
-    MyCanvas( WhiteboardWindow* parent );
-
-	/**
-	 * Sets the start position when the left mouse button is pressed
-	 */
-	void SetStartPos(wxMouseEvent& event);
-
-	/**
-	 * Draw the right thing based on selected tool, start position,
-	 * and current position.
-	 */
-	void SetEndPos(wxMouseEvent& event);
-
-	/**
-	 * Callback function that is run when the window is redrawn
-	 */
-    void OnPaint(wxPaintEvent& event);
-
-	/**
-	 * Callback function that is run when the mouse is moved
-	 */
-    void OnMouseMove(wxMouseEvent& event);
-
-	/**
-	 * Function that adds a shape to the collection of shapes
-	 */
-	void AddNewShape(std::vector<wxString> shape);
-
-	long         mX;
-	long         mY;
-	wxPoint      mStartPos;
-	std::vector<std::vector<wxString> > objects;
-
-private:
-    WhiteboardWindow *mpOwner;
-
-    wxBitmap     mSmileBmp;
-    wxIcon       mStdIcon;
-    bool         mClip;
-	bool         mDrawing;
-
-    DECLARE_EVENT_TABLE()
-};
 
 /**
  * This is the whiteboard window.  The TA can draw in it!
@@ -82,7 +33,7 @@ class WhiteboardWindow : public wxFrame
 		WhiteboardWindow(const wxString& title, TextWindow* parent);
 
 		/**
-		 * Prepares the dc
+		 * Prepares the dc for drawing
 		 */
 		void PrepareDC(wxDC& dc);
 
@@ -96,22 +47,22 @@ class WhiteboardWindow : public wxFrame
 		//void Free(wxCommandEvent& WXUNUSED(event));
 		void Undo(wxCommandEvent& WXUNUSED(event));
 		
-		int         mBackgroundMode;
-		int         mTextureBackground;
-		int         mMapMode;
-		double      mXUserScale;
-		double      mYUserScale;
-		int         mXLogicalOrigin;
-		int         mYLogicalOrigin;
-		bool        mXAxisReversed,
-					mYAxisReversed;
-		wxColour    mColourForeground,    // these are _text_ colours
-			        mColourBackground;
-		wxBrush     mBackgroundBrush;
-	    MyCanvas*   mpCanvas;
+		int         mBackgroundMode;			// Mode of the background
+		int         mTextureBackground;			// Texture of the background
+		int         mMapMode;					// Mapping mode
+		double      mXUserScale;				// X scale
+		double      mYUserScale;				// Y scale
+		int         mXLogicalOrigin;			// X origin
+		int         mYLogicalOrigin;			// Y origin
+		bool        mXAxisReversed,				// Is the x axis reversed?
+					mYAxisReversed;				// Is the y axis reversed?
+		wxColour    mColourForeground,			// these are _text_ colours
+			        mColourBackground;			// Background color
+		wxBrush     mBackgroundBrush;			// Background brush
+	    MyCanvas*   mpCanvas;					// The canvas in this window
 
-		wxString    mActiveTool;
-		TextWindow* mpParent;
+		wxString    mActiveTool;				// The currently active tool
+		TextWindow* mpParent;					// The text window (parent to this window)
 
 	private:
 

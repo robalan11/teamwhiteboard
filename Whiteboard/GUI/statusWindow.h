@@ -19,5 +19,5 @@ public:
 	 */
 	void Append(const wxString& text);
 
-	wxTextCtrl* mpTextBox;
+	wxTextCtrl* mpTextBox;	// The text box into which status text is placed
 };
