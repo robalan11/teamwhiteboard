@@ -1,4 +1,4 @@
-#include <wx/wx.h>
+#include <wx/wx.h>	// USES lots of things (wxWidgets main file)
 
 /**
  * This is the status window.  It's a white box that displays messages related 

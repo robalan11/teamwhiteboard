@@ -1,7 +1,7 @@
-#include "textWindow.h"
-#include "statusWindow.h"
-#include "admin.h"
-#include "whiteboard.h"
+#include "textWindow.h"		// ISA text window
+#include "statusWindow.h"	// HASA status window
+#include "admin.h"			// HASA admin window
+#include "whiteboard.h"		// HASA whiteboard window
 
 // Defines
 #define SERVER_ID 100

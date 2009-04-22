@@ -1,6 +1,6 @@
 #ifndef PROMPT
 #define PROMPT
-#include <wx/wx.h>
+#include <wx/wx.h>	// USES lots of things (wxWidgets main file)
 
 /**
  * This is the prompt before the chat window becomes enabled.  The user is 

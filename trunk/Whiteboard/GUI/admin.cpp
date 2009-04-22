@@ -1,4 +1,4 @@
-#include "admin.h"
+#include "admin.h"	// ISA admin window
 
 AdminWindow::AdminWindow(const wxString& title)
        : wxFrame(NULL, -1, title, wxPoint(-1, -1), wxSize(300, 300))
