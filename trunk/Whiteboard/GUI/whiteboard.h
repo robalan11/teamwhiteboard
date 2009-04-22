@@ -1,3 +1,6 @@
+#ifndef __WHITEBOARD
+#define __WHITEBOARD
+
 #include <wx/wx.h>
 #include <wx/socket.h>
 #include <wx/listctrl.h>
@@ -12,9 +15,10 @@
 #include <stdlib.h>
 
 class WhiteboardWindow;
+class TextWindow;
 
 /**
- * This is the Canvas!  It's where stuff goes!
+ * This is the Canvas!  It's where stuff that is drawn is displayed.
  */
 
 class MyCanvas: public wxWindow
@@ -33,23 +37,33 @@ public:
 	 */
 	void SetEndPos(wxMouseEvent &event);
 
+	/**
+	 * Callback function that is run when the window is redrawn
+	 */
     void OnPaint(wxPaintEvent &event);
+
+	/**
+	 * Callback function that is run when the mouse is moved
+	 */
     void OnMouseMove(wxMouseEvent &event);
 
-	void addNewShape(std::vector<wxString> shape);
+	/**
+	 * Function that adds a shape to the collection of shapes
+	 */
+	void AddNewShape(std::vector<wxString> shape);
 
-	long         x;
-	long         y;
-	wxPoint      m_startPos;
+	long         mX;
+	long         mY;
+	wxPoint      mStartPos;
 	std::vector<std::vector<wxString> > objects;
 
 private:
-    WhiteboardWindow *m_owner;
+    WhiteboardWindow *mpOwner;
 
-    wxBitmap     m_smile_bmp;
-    wxIcon       m_std_icon;
-    bool         m_clip;
-	bool         drawing;
+    wxBitmap     mSmileBmp;
+    wxIcon       mStdIcon;
+    bool         mClip;
+	bool         mDrawing;
 
     DECLARE_EVENT_TABLE()
 };
@@ -65,7 +79,7 @@ class WhiteboardWindow : public wxFrame
 		/**
 		 * The constructor
 		 */
-		WhiteboardWindow(const wxString& title, textWindow *parent);
+		WhiteboardWindow(const wxString& title, TextWindow *parent);
 
 		/**
 		 * Prepares the dc
@@ -73,31 +87,31 @@ class WhiteboardWindow : public wxFrame
 		void PrepareDC(wxDC& dc);
 
 		/**
-		 * Tool functions
+		 * Tool functions.  They each set the active tool and change the statusbar message.
 		 */
 		void Clear(wxCommandEvent &WXUNUSED(event));
 		void Line(wxCommandEvent &WXUNUSED(event));
 		void Rect(wxCommandEvent &WXUNUSED(event));
 		void Circ(wxCommandEvent &WXUNUSED(event));
-		void Free(wxCommandEvent &WXUNUSED(event));
+		//void Free(wxCommandEvent &WXUNUSED(event));
 		void Undo(wxCommandEvent &WXUNUSED(event));
 		
-		int         m_backgroundMode;
-		int         m_textureBackground;
-		int         m_mapMode;
-		double      m_xUserScale;
-		double      m_yUserScale;
-		int         m_xLogicalOrigin;
-		int         m_yLogicalOrigin;
-		bool        m_xAxisReversed,
-					m_yAxisReversed;
-		wxColour    m_colourForeground,    // these are _text_ colours
-			        m_colourBackground;
-		wxBrush     m_backgroundBrush;
-	    MyCanvas   *m_canvas;
+		int         mBackgroundMode;
+		int         mTextureBackground;
+		int         mMapMode;
+		double      mXUserScale;
+		double      mYUserScale;
+		int         mXLogicalOrigin;
+		int         mYLogicalOrigin;
+		bool        mXAxisReversed,
+					mYAxisReversed;
+		wxColour    mColourForeground,    // these are _text_ colours
+			        mColourBackground;
+		wxBrush     mBackgroundBrush;
+	    MyCanvas   *mpCanvas;
 
-		wxString    m_activeTool;
-		textWindow *m_parent;
+		wxString    mActiveTool;
+		TextWindow *mpParent;
 
 	private:
 
@@ -106,3 +120,5 @@ class WhiteboardWindow : public wxFrame
 		 */
 		DECLARE_EVENT_TABLE()
 };
+
+#endif

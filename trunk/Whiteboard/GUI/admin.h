@@ -23,29 +23,21 @@ class AdminWindow : public wxFrame
 		void AddPerson(wxString name);
 		
 		/**
-		 * Removes a sheep.
+		 * Removes a person from the list of people.
 		 */
 		void RemovePerson(wxString name);
 		
 		/**
 		 * Returns the whole freaking list.
 		 */
-		std::vector<wxString> getList();
+		std::vector<wxString> GetList();
 		
 		/**
 		 * Adds the items in the given vector to the list
 		 */
-		void updateList(std::vector<wxString> list);
-
-		/**
-		 * Event handler for kick
-		 */
-		void OnKickEvent(wxSocketEvent& event);
+		void UpdateList(std::vector<wxString> list);
 
 	private:
 
-		/**
-		 * The macro for the event table.
-		 */
-		DECLARE_EVENT_TABLE()
+		wxListCtrl* mpPeopleList;
 };

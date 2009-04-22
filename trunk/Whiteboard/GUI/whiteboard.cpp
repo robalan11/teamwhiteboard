@@ -1,29 +1,29 @@
 #include "whiteboard.h"
 
-WhiteboardWindow::WhiteboardWindow(const wxString& title, textWindow *parent)
+WhiteboardWindow::WhiteboardWindow(const wxString& title, TextWindow *parent)
        : wxFrame(NULL, -1, title, wxPoint(-1, -1), wxSize(640, 480), wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLIP_CHILDREN)
 {	
-	m_parent = parent;
+	mpParent = parent;
 
     CreateStatusBar(2);
     SetStatusText(_T("Welcome to the Whiteboard!"));
 
-	m_mapMode = wxMM_TEXT;
-    m_xUserScale = 1.0;
-    m_yUserScale = 1.0;
-    m_xLogicalOrigin = 0;
-    m_yLogicalOrigin = 0;
-    m_xAxisReversed =
-    m_yAxisReversed = false;
-    m_backgroundMode = wxSOLID;
-    m_colourForeground = *wxBLACK;
-    m_colourBackground = *wxWHITE;
-    m_textureBackground = false;
+	mMapMode = wxMM_TEXT;
+    mXUserScale = 1.0;
+    mYUserScale = 1.0;
+    mXLogicalOrigin = 0;
+    mYLogicalOrigin = 0;
+    mXAxisReversed =
+    mYAxisReversed = false;
+    mBackgroundMode = wxSOLID;
+    mColourForeground = *wxBLACK;
+    mColourBackground = *wxWHITE;
+    mTextureBackground = false;
 
-	m_activeTool = "";
+	mActiveTool = "";
 
-    m_canvas = new MyCanvas( this );
-	m_canvas->Show();
+    mpCanvas = new MyCanvas( this );
+	mpCanvas->Show();
 
 	//Buttons!
 	wxButton *butt_clear = new wxButton();
@@ -43,53 +43,53 @@ WhiteboardWindow::WhiteboardWindow(const wxString& title, textWindow *parent)
 
 void WhiteboardWindow::PrepareDC(wxDC& dc)
 {
-    dc.SetLogicalOrigin( m_xLogicalOrigin, m_yLogicalOrigin );
-    dc.SetAxisOrientation( !m_xAxisReversed, m_yAxisReversed );
-    dc.SetUserScale( m_xUserScale, m_yUserScale );
-    dc.SetMapMode( m_mapMode );
+    dc.SetLogicalOrigin( mXLogicalOrigin, mYLogicalOrigin );
+    dc.SetAxisOrientation( !mXAxisReversed, mYAxisReversed );
+    dc.SetUserScale( mXUserScale, mYUserScale );
+    dc.SetMapMode( mMapMode );
 }
 
 void WhiteboardWindow::Clear(wxCommandEvent &WXUNUSED(event))
 {
 	SetStatusText(_T("Clear"));
-	m_activeTool = "clear";
+	mActiveTool = "clear";
 }
 
 void WhiteboardWindow::Line(wxCommandEvent &WXUNUSED(event))
 {
 	SetStatusText(_T("Click and drag to draw a line."));
-	m_activeTool = "line";
+	mActiveTool = "line";
 }
 
 void WhiteboardWindow::Rect(wxCommandEvent &WXUNUSED(event))
 {
 	SetStatusText(_T("Click and drag to draw a rectangle."));
-	m_activeTool = "rect";
+	mActiveTool = "rect";
 }
 
 void WhiteboardWindow::Circ(wxCommandEvent &WXUNUSED(event))
 {
 	SetStatusText(_T("Click and drag to draw a circle."));
-	m_activeTool = "circ";
+	mActiveTool = "circ";
 }
 
 /*void WhiteboardWindow::Free(wxCommandEvent &WXUNUSED(event))
 {
 	SetStatusText(_T("Click and drag to draw freely."));
-	m_activeTool = "free";
+	mActiveTool = "free";
 }*/
 
 void WhiteboardWindow::Undo(wxCommandEvent &WXUNUSED(event))
 {
-	if (m_parent->IsServer()) {
-		if (m_canvas->objects.size() > 0) {
+	if (mpParent->IsServer()) {
+		if (mpCanvas->objects.size() > 0) {
 			SetStatusText(_T("Last command undone."));
-			m_activeTool = "undo";
-			m_canvas->objects.pop_back();
-			m_canvas->Refresh();
+			mActiveTool = "undo";
+			mpCanvas->objects.pop_back();
+			mpCanvas->Refresh();
 		}
 		else {
-			m_activeTool = "";
+			mActiveTool = "";
 		}
 	}
 }
@@ -116,9 +116,9 @@ END_EVENT_TABLE()
 
 MyCanvas::MyCanvas(WhiteboardWindow *parent) : wxWindow(parent, wxID_ANY, wxPoint(32,0), wxSize(602,431))
 {
-	m_owner = parent;
-    m_clip = false;
-	drawing = false;
+	mpOwner = parent;
+    mClip = false;
+	mDrawing = false;
 }
 
 void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
@@ -126,72 +126,72 @@ void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
     wxPaintDC pdc(this);
     wxDC &dc = pdc ;
 
-    m_owner->PrepareDC(dc);
+    mpOwner->PrepareDC(dc);
 	
 	std::vector<wxString> foob; //foob!@
 	char buffer[128];
-	if (m_owner->m_parent->IsServer()){
-		if (m_owner->m_activeTool == "") return;
+	if (mpOwner->mpParent->IsServer()){
+		if (mpOwner->mActiveTool == "") return;
 
-		if (m_owner->m_activeTool == "clear")
+		if (mpOwner->mActiveTool == "clear")
 		{
 			objects.clear();
 			foob.push_back(_T("clear"));
 		}
 
-		if (m_owner->m_activeTool == "line")
+		if (mpOwner->mActiveTool == "line")
 		{
 			foob.push_back(_T("line"));
-			sprintf(buffer, "%d", m_startPos.x);
+			sprintf(buffer, "%d", mStartPos.x);
 			foob.push_back(_T(buffer));
-			sprintf(buffer, "%d", m_startPos.y);
+			sprintf(buffer, "%d", mStartPos.y);
 			foob.push_back(_T(buffer));
-			sprintf(buffer, "%d", x);
+			sprintf(buffer, "%d", mX);
 			foob.push_back(_T(buffer));
-			sprintf(buffer, "%d", y);
+			sprintf(buffer, "%d", mY);
 			foob.push_back(_T(buffer));
 		}
 
-		if (m_owner->m_activeTool == "rect")
+		if (mpOwner->mActiveTool == "rect")
 		{
 			foob.push_back(_T("rect"));
-			sprintf(buffer, "%d", m_startPos.x);
+			sprintf(buffer, "%d", mStartPos.x);
 			foob.push_back(_T(buffer));
-			sprintf(buffer, "%d", m_startPos.y);
+			sprintf(buffer, "%d", mStartPos.y);
 			foob.push_back(_T(buffer));
-			sprintf(buffer, "%d", x-m_startPos.x);
+			sprintf(buffer, "%d", mX-mStartPos.x);
 			foob.push_back(_T(buffer));
-			sprintf(buffer, "%d", y-m_startPos.y);
+			sprintf(buffer, "%d", mY-mStartPos.y);
 			foob.push_back(_T(buffer));
 		}
 
-		if (m_owner->m_activeTool == "circ")
+		if (mpOwner->mActiveTool == "circ")
 		{
 			foob.push_back(_T("circ"));
-			sprintf(buffer, "%d", m_startPos.x);
+			sprintf(buffer, "%d", mStartPos.x);
 			foob.push_back(_T(buffer));
-			sprintf(buffer, "%d", m_startPos.y);
+			sprintf(buffer, "%d", mStartPos.y);
 			foob.push_back(_T(buffer));
-			sprintf(buffer, "%d", x-m_startPos.x);
+			sprintf(buffer, "%d", mX-mStartPos.x);
 			foob.push_back(_T(buffer));
-			sprintf(buffer, "%d", y-m_startPos.y);
+			sprintf(buffer, "%d", mY-mStartPos.y);
 			foob.push_back(_T(buffer));
 		}
 
-		if (m_owner->m_activeTool == "free")
+		if (mpOwner->mActiveTool == "free")
 		{
 			dc.SetPen( wxPen( wxT("black"), 1, wxSOLID) );
-			dc.DrawLine( m_startPos.x, m_startPos.y, x, y );
+			dc.DrawLine( mStartPos.x, mStartPos.y, mX, mY );
 		}
 
-		if (m_owner->m_activeTool == "undo")
+		if (mpOwner->mActiveTool == "undo")
 		{
 			foob.push_back(_T("undo"));
 		}
 
-		if (m_owner->m_activeTool != "clear" && m_owner->m_activeTool != "undo") objects.push_back(foob);
+		if (mpOwner->mActiveTool != "clear" && mpOwner->mActiveTool != "undo") objects.push_back(foob);
 		
-		m_owner->m_parent->sendNewShape(foob);
+		mpOwner->mpParent->SendNewShape(foob);
 	}
 
 	for (unsigned int i = 0; i < objects.size(); i++)
@@ -211,43 +211,43 @@ void MyCanvas::OnPaint(wxPaintEvent &WXUNUSED(event))
 	}
 }
 
-void MyCanvas::addNewShape(std::vector<wxString> shape)
+void MyCanvas::AddNewShape(std::vector<wxString> shape)
 {
-	wxString temp = m_owner->m_activeTool;
-	m_owner->m_activeTool = shape[0];
+	wxString temp = mpOwner->mActiveTool;
+	mpOwner->mActiveTool = shape[0];
 	objects.push_back(shape);
 	Refresh();
-	//m_owner->m_activeTool = temp;
+	//mpOwner->mActiveTool = temp;
 }
 
 void MyCanvas::OnMouseMove(wxMouseEvent &event)
 {
     wxClientDC dc(this);
     PrepareDC(dc);
-    m_owner->PrepareDC(dc);
+    mpOwner->PrepareDC(dc);
 
     wxPoint pos = event.GetPosition();
-    x = dc.DeviceToLogicalX( pos.x );
-    y = dc.DeviceToLogicalY( pos.y );
+    mX = dc.DeviceToLogicalX( pos.x );
+    mY = dc.DeviceToLogicalY( pos.y );
     wxString str;
-    str.Printf( wxT("Current mouse position: %d,%d"), (int)x, (int)y );
-    m_owner->SetStatusText( str );
+    str.Printf( wxT("Current mouse position: %d,%d"), (int)mX, (int)mY );
+    mpOwner->SetStatusText( str );
 }
 
 void MyCanvas::SetStartPos(wxMouseEvent &WXUNUSED(event))
 {
-	if (m_owner->m_parent->IsServer()) {
-		m_startPos = wxPoint(x, y);
-		drawing = true;
+	if (mpOwner->mpParent->IsServer()) {
+		mStartPos = wxPoint(mX, mY);
+		mDrawing = true;
 	}
 }
 
 void MyCanvas::SetEndPos(wxMouseEvent &WXUNUSED(event))
 {
-	if (m_owner->m_parent->IsServer()) {
-		if (drawing) {
+	if (mpOwner->mpParent->IsServer()) {
+		if (mDrawing) {
 		    Refresh();
-			drawing = false;
+			mDrawing = false;
 		}
 	}
 }
