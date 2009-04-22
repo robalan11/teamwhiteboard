@@ -81,14 +81,16 @@ void WhiteboardWindow::Circ(wxCommandEvent &WXUNUSED(event))
 
 void WhiteboardWindow::Undo(wxCommandEvent &WXUNUSED(event))
 {
-	if (m_canvas->objects.size() > 0) {
-		SetStatusText(_T("Last command undone."));
-		m_activeTool = "undo";
-		m_canvas->objects.pop_back();
-		m_canvas->Refresh();
-	}
-	else {
-		m_activeTool = "";
+	if (m_parent->IsServer()) {
+		if (m_canvas->objects.size() > 0) {
+			SetStatusText(_T("Last command undone."));
+			m_activeTool = "undo";
+			m_canvas->objects.pop_back();
+			m_canvas->Refresh();
+		}
+		else {
+			m_activeTool = "";
+		}
 	}
 }
 

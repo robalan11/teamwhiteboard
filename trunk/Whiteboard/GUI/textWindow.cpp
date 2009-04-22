@@ -40,12 +40,12 @@ wxString names[MAX_CLIENTS];
 wxString IPs[MAX_CLIENTS];
 wxString banlist[128];
 int num_banned;
+Prompt *prompt;
 
 // The constructor
 textWindow::textWindow(const wxString& title)
        : wxFrame(NULL, -1, title, wxPoint(-1, -1), wxSize(300, 400))
 {
-
 	// The panel itself
 	panel->Create(this, -1);
 
@@ -107,6 +107,10 @@ textWindow::textWindow(const wxString& title)
 	// Wrap it up
 	panel->SetSizer(vbox);
 	Centre();
+	
+	//Create the connection prompt
+	prompt = new Prompt(wxT("Enter some info"), this);
+	prompt->Show(true);
 }
 
 // The quit function
@@ -153,7 +157,9 @@ void ParseCommand(wxString line) {
 	comparator.Compile("^/kick$", 0);
 	if (server && comparator.Matches(command)) {
 		for (int i = 0; i < m_numClients; i++) {
-			if (names[i].Cmp(remainder)) {
+			if (names[i].Cmp(remainder) == 0) {
+				status->Append("REMANDER: " + remainder + "\n");
+				status->Append("NAME: " + names[i] + "\n");
 				m_server_out[i]->WriteMsg("/disconnect", 12 * sizeof(wxChar));
 				break;
 			}
@@ -164,7 +170,7 @@ void ParseCommand(wxString line) {
 	comparator.Compile("^/ban$", 0);
 	if (server && comparator.Matches(command)) {
 		for (int i = 0; i < m_numClients; i++) {
-			if (names[i].Cmp(remainder)) {
+			if (names[i].Cmp(remainder) == 0) {
 				m_server_out[i]->WriteMsg("/disconnect", 12 * sizeof(wxChar));
 				banlist[num_banned] = IPs[i];
 				num_banned++;
@@ -222,7 +228,7 @@ void ParseCommand(wxString line) {
 // The "text enter" event handler
 void textWindow::OnTextEnter(wxCommandEvent& WXUNUSED(event))
 {
-	wxString input = tc3->GetValue() + _T("\n");
+	wxString input = tc3->GetValue();
 	
 	wxRegEx comparator;
 	comparator.Compile("^/.+", wxRE_EXTENDED);
@@ -233,7 +239,7 @@ void textWindow::OnTextEnter(wxCommandEvent& WXUNUSED(event))
 	}
 
 	// Make sure something is entered
-	if (input != "\n"){
+	if (input != ""){
 		time_t rawtime;
 		struct tm * timeinfo;
 		char* timestr = (char*)malloc(10*sizeof(char));
@@ -304,18 +310,16 @@ void textWindow::setupClient()
 	if (m_sock_out->IsConnected()){
 		// Send IP
 		m_sock_out->WriteMsg(addr.IPAddress().c_str(), (wxStrlen(addr.IPAddress()) + 1) * sizeof(wxChar));
-
-		// See if I'm banned
-		wxChar *response = new wxChar[100];
-		m_sock_out->ReadMsg(response, 100 * sizeof(wxChar)).LastCount();
-		if (!strcmp(response, "/hellno")){
-			wxMessageDialog *dial = new wxMessageDialog(NULL, 
-				wxT("Sorry, you're banned from this chat"), wxT("Exclamation"), 
-				wxOK | wxICON_EXCLAMATION);
-				dial->ShowModal();
-			
-			return;
+		// See if you're banned :-)
+		wxChar* text = new wxChar[16];
+		m_sock_out->ReadMsg(text, sizeof(wxChar)*10000).LastCount();
+		wxString test(text);
+		if (test == "/disconnect"){
+			m_sock_out->Close();
+			prompt->Close(true);
+			Quit();
 		}
+
 		// Send name
 		m_sock_out->WriteMsg(name.c_str(), (wxStrlen(name) + 1) * sizeof(wxChar));
 		status->Append(_T("Connection established\n"));
@@ -461,14 +465,14 @@ void textWindow::OnServerEvent(wxSocketEvent &WXUNUSED(event))
 	sock->ReadMsg(IP, sizeof(wxChar)*16).LastCount();
 	for (int i = 0; i < num_banned; i++){
 		if (!strcmp(IP, banlist[i])) {
-			sock->WriteMsg("/hellno", 8 * sizeof(wxChar));
+			sock->WriteMsg("/disconnect", 12 * sizeof(wxChar));
 			status->Append(_T("Connection from banned IP "));
 			status->Append(IP);
 			status->Append(_T(" refused.\n"));
 			return;
 		}
 	}
-	sock->WriteMsg("/hellyes", 9 * sizeof(wxChar));
+	sock->WriteMsg("/welcome", 9 * sizeof(wxChar));
 
 	wxChar *text = new wxChar[100];
 	sock->ReadMsg(text, sizeof(wxChar)*100).LastCount();
