@@ -8,7 +8,7 @@
 
 // The constructor
 Prompt::Prompt(const wxString& title, wxFrame* parent)
-       : wxFrame(NULL, -1, title, wxPoint(-1, -1), wxSize(290, 200), wxMINIMIZE_BOX | wxCAPTION | wxSYSTEM_MENU)
+       : wxFrame(parent, -1, title, wxPoint(-1, -1), wxSize(290, 200), wxMINIMIZE_BOX | wxCAPTION | wxSYSTEM_MENU | wxFRAME_FLOAT_ON_PARENT)
 {
 	// Give the frame an icon
 	SetIcon(wxICON(mondrian));
