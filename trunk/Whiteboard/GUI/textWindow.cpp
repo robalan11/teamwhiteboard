@@ -44,7 +44,7 @@ Prompt* gpPrompt;					// Prompt window
 
 // The constructor
 TextWindow::TextWindow(const wxString& title)
-       : wxFrame(NULL, -1, title, wxPoint(-1, -1), wxSize(300, 400))
+       : wxFrame(NULL, -1, title, wxPoint(350, 50), wxSize(300, 400))
 {
 	// The gpPanel itself
 	gpPanel->Create(this, -1);
@@ -106,7 +106,6 @@ TextWindow::TextWindow(const wxString& title)
 	
 	// Wrap it up
 	gpPanel->SetSizer(vbox);
-	Centre();
 	
 	//Create the connection gpPrompt
 	gpPrompt = new Prompt(wxT("Enter some info"), this);
