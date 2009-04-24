@@ -1,4 +1,5 @@
 #summary This is the title page for the user documentation.
+#labels Featured
 
 = Whiteboard - User Documentation =
 
