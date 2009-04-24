@@ -1,0 +1,11 @@
+#summary This is the title page for the user documentation.
+
+= Whiteboard - User Documentation =
+
+This is the user documentation for Whiteboard.  Work in progress.
+
+
+== Contents ==
+
+Add your content here.  Format your content with:
+  * 1. Installing the program
